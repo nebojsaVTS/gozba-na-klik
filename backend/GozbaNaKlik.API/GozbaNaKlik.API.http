@@ -1,0 +1,6 @@
+@GozbaNaKlik.API_HostAddress = http://localhost:5171
+
+GET {{GozbaNaKlik.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
