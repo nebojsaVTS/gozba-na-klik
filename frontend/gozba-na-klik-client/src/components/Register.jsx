@@ -65,6 +65,7 @@ function Register() {
                     name="email"
                     placeholder="Email"
                     value={formData.email}
+                    onChange={handleChange}
                 />
 
 
