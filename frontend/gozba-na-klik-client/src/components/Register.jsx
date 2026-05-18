@@ -50,6 +50,7 @@ function Register() {
                     placeholder="Username"
                     value={formData.username}
                     onChange={handleChange}
+                    autoComplete="off"
                 />
 
                 <input 
@@ -58,6 +59,7 @@ function Register() {
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
+                    autoComplete="new-password"
                 />
 
                 <input 
@@ -66,7 +68,9 @@ function Register() {
                     placeholder="Email"
                     value={formData.email}
                     onChange={handleChange}
+                    autoComplete="off"
                 />
+            
 
 
 
