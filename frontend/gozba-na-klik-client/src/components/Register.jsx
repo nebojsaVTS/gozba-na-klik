@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./Register.scss";
+import styles from "./Register.module.scss";
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -9,6 +9,7 @@ function Register() {
     });
 
     const [message, setMessage] = useState("");
+    const [isError, setIsError] = useState(false);
 
     function handleChange(event) {
         setFormData ({
@@ -26,10 +27,12 @@ function Register() {
             !formData.email
         ){
             setMessage("Sva polja moraju biti popunjena.");
+            setIsError(true);
             return;
         }
 
         setMessage("Uspesna registracija!")
+        setIsError(false);
 
         setFormData({
             username: "",
@@ -40,7 +43,7 @@ function Register() {
 
 
     return (
-        <div className="register-container">
+        <div className={styles.registerContainer}>
             <h2>Registracija</h2>
 
             <form onSubmit={handleSubmit}>
@@ -77,7 +80,8 @@ function Register() {
                 <button type="submit">Registruj se</button>
             </form>
 
-            {message && <p>{message}</p>}
+            {message && (
+                <p className={isError ? styles.errorMessage : styles.successMessage}>{message}</p>)}
         </div>
     );
 }
