@@ -1,4 +1,4 @@
-.registerContainer {
+.register-container {
     width: 300px;
     margin: 50px auto;
     display: flex;
@@ -24,13 +24,13 @@
         cursor: pointer;
     }
 
-    .errorMessage {
+    .error-message {
         text-align: center;
         color: #d32f2f;
         font-weight: 500;
     }
 
-    .successMessage {
+    .success-message {
         text-align: center;
         color: #2e7d32;
         font-weight: 500;

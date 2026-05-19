@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Register.module.scss";
+import "./Register.scss";
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -43,7 +43,7 @@ function Register() {
 
 
     return (
-        <div className={styles.registerContainer}>
+        <div className="register-container">
             <h2>Registracija</h2>
 
             <form onSubmit={handleSubmit}>
@@ -74,14 +74,11 @@ function Register() {
                     autoComplete="off"
                 />
             
-
-
-
                 <button type="submit">Registruj se</button>
             </form>
 
             {message && (
-                <p className={isError ? styles.errorMessage : styles.successMessage}>{message}</p>)}
+                <p className={isError ? "error-message" : "success-message"}>{message}</p>)}
         </div>
     );
 }
