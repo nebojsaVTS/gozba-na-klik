@@ -16,8 +16,9 @@ const Login = () => {
       return;
     }
 
-    setMessage("Forma je uspešno popunjena.");
+    setMessage("");
     setIsError(false);
+
     setUsername("");
     setPassword("");
   };
@@ -41,15 +42,7 @@ const Login = () => {
         />
         <button type="submit">Prijavi se</button>
 
-        {message && (
-          <p
-            className={
-              isError ? "login-message error" : "login-message success"
-            }
-          >
-            {message}
-          </p>
-        )}
+        {message && <p className={"login-message error"}>{message}</p>}
       </form>
     </div>
   );
