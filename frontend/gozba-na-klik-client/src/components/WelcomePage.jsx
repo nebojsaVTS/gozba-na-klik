@@ -1,4 +1,4 @@
-import "./WelcomePage.css";
+import "./WelcomePage.scss";
 
 const WelcomePage = () => {
   return (
