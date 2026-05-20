@@ -4,27 +4,35 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-}
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
 
-input {
-    padding: 10px;
-    border: 1px solid gray;
-    border-radius: 5px;
-}
+    input {
+        padding: 10px;
+        border: 1px solid gray;
+        border-radius: 5px;
+    }
 
-button {
-    padding: 10px;
-    border: 1px solid gray;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    button {
+        padding: 10px;
+        border: 1px solid gray;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-p {
-    text-align: center;
+    .error-message {
+        text-align: center;
+        color: #d32f2f;
+        font-weight: 500;
+    }
+
+    .success-message {
+        text-align: center;
+        color: #2e7d32;
+        font-weight: 500;
+    }
 }

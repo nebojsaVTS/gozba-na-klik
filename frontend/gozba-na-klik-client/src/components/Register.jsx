@@ -9,6 +9,7 @@ function Register() {
     });
 
     const [message, setMessage] = useState("");
+    const [isError, setIsError] = useState(false);
 
     function handleChange(event) {
         setFormData ({
@@ -26,10 +27,12 @@ function Register() {
             !formData.email
         ){
             setMessage("Sva polja moraju biti popunjena.");
+            setIsError(true);
             return;
         }
 
         setMessage("Uspesna registracija!")
+        setIsError(false);
 
         setFormData({
             username: "",
@@ -71,13 +74,11 @@ function Register() {
                     autoComplete="off"
                 />
             
-
-
-
                 <button type="submit">Registruj se</button>
             </form>
 
-            {message && <p>{message}</p>}
+            {message && (
+                <p className={isError ? "error-message" : "success-message"}>{message}</p>)}
         </div>
     );
 }
