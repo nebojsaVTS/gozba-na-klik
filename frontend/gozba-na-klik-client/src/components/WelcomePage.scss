@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+
+  background-image: url("/src/assets/Hrana1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 245, 242, 0.75);
+  z-index: -1;
+}
+
+.welcome-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+h1 {
+  color: #b62504;
+  font-size: 48px;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #0f0f0f;
+  padding: 10px 18px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  background: rgba(221, 216, 216, 0.25);
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  background-color: #ff5a36;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #e14b2a;
+}
+@media (max-width: 768px) {
+  h1 {
+    font-size: 34px;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    width: 80%;
+  }
+
+  button {
+    width: 100%;
+  }
+}
