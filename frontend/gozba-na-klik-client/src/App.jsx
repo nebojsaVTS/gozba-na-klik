@@ -1,7 +1,15 @@
-import WelcomePage from "./pages/WelcomePage";
+import WelcomePage from "./components/WelcomePage";
+import Register from "./components/Register";
+import Login from "./components/Login";
 
 function App() {
-  return <WelcomePage />;
+  return (
+    <div>
+      <WelcomePage />
+      <Register />
+      <Login />
+    </div>
+  );
 }
 
 export default App;

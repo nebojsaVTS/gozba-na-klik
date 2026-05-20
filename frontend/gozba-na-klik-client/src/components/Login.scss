@@ -1,0 +1,43 @@
+.login-container {
+  width: 300px;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  h2 {
+    text-align: center;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  input {
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
+  }
+
+  button {
+    padding: 10px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  p {
+    text-align: center;
+  }
+}
+
+.login-message {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.error {
+  color: red;
+}
