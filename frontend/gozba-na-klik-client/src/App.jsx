@@ -1,13 +1,17 @@
 import WelcomePage from "./components/WelcomePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import AdminUsers from "./components/AdminUsers";
 
 function App() {
   return (
-    <div>
+   /* <div>
       <WelcomePage />
       <Register />
       <Login />
+    </div> */
+   <div>
+      <AdminUsers />
     </div>
   );
 }
