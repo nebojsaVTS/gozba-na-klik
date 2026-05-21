@@ -1,5 +1,5 @@
 import "./Login.scss";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -50,7 +50,7 @@ const Login = () => {
           />
           <button type="submit">Prijavi se</button>
 
-          {message && <p className={"login-message error"}>{message}</p>}
+          {message && <p className={`login-message ${isError ? "error" : "success"}`}>{message}</p>}
       </form>
      </div>   
   
