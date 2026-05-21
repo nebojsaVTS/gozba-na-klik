@@ -1,6 +1,9 @@
 import "./WelcomePage.scss";
+import { useNavigate } from "react-router-dom"
 
 const WelcomePage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="welcome-container">
       <h1>GOZBA NA KLIK</h1>
@@ -11,8 +14,8 @@ const WelcomePage = () => {
       </p>
 
       <div className="buttons">
-        <button>👤 Prijava</button>
-        <button>🔐 Registracija korisnika</button>
+        <button onClick={() => navigate("/login")}>👤 Prijava</button>
+        <button onClick={() => navigate("/register")}>🔐 Registracija korisnika</button>
       </div>
     </div>
   );

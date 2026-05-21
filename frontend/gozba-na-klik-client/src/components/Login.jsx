@@ -1,11 +1,13 @@
 import "./Login.scss";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,11 +18,16 @@ const Login = () => {
       return;
     }
 
-    setMessage("");
-    setIsError(false);
+    // nema backedn koji vraca ulogu korisnika
+    // stavljam const uloga= "KUPAC" za fiksnu vrednost da testiram redirect
+    //ovo sve menja backend kad napravimo
 
-    setUsername("");
-    setPassword("");
+    const uloga = "KUPAC";
+
+    if (uloga === "KUPAC") navigate("/kupac");
+    else if (uloga === "VLASNIK RESTORANA") navigate("/vlasnik");
+    else if (uloga === "ADMINISTRATOR") navigate("/administrator");
+    else if (uloga === "KURIR") navigate("/kurir");
   };
 
   return (
@@ -29,22 +36,24 @@ const Login = () => {
 
       <form className="login-form" onSubmit={handleSubmit}>
         <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Prijavi se</button>
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
 
-        {message && <p className={"login-message error"}>{message}</p>}
+        <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit">Prijavi se</button>
+
+          {message && <p className={"login-message error"}>{message}</p>}
       </form>
-    </div>
+     </div>   
+  
   );
 };
 
