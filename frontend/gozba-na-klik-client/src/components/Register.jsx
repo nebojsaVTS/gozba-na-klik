@@ -1,7 +1,10 @@
 import { useState } from "react";
 import "./Register.scss";
+import { useNavigate } from "react-router-dom"
+
 
 function Register() {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         username: "",
         password: "",
@@ -39,6 +42,10 @@ function Register() {
             password: "",
             email: "",
         });
+
+        setTimeout(() => {
+            navigate("/login");
+        }, 2000);
     }
 
 
