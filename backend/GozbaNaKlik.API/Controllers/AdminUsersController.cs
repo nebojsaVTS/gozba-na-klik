@@ -23,12 +23,5 @@ public class AdminUsersController : ControllerBase
         return Ok(users);
     }
 
-    [HttpPost]
-    public ActionResult<User> CreateUser(User user)
-    {
-        _context.Users.Add(user);
-        _context.SaveChanges();
-
-        return Ok(user);
-    }
+    
 }
