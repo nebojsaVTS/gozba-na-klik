@@ -20,7 +20,7 @@ const Login = () => {
 
     // nema backedn koji vraca ulogu korisnika
     // stavljam const uloga= "KUPAC" za fiksnu vrednost da testiram redirect
-    //ovo sve menja backend kad napravimo
+    //ovo sve menja backend kad napravimo 
 
     const uloga = "KUPAC";
 

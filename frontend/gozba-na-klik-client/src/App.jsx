@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, UNSAFE_DataRouterStateContext } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WelcomePage from "./components/WelcomePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
