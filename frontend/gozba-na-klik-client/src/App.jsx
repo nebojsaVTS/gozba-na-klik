@@ -6,30 +6,18 @@ import AdminUsers from "./components/AdminUsers";
 
 function App() {
   return (
-<<<<<<< HEAD
-   /* <div>
-      <WelcomePage />
-      <Register />
-      <Login />
-    </div> */
-   <div>
-      <AdminUsers />
-    </div>
-=======
     <BrowserRouter>
-     <Routes>
-      
-      <Route path="/" element={<WelcomePage />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/kupac" element={<div>Pocetna stranica za kupca</div>} />
-      <Route path="/vlasnik" element={<div>Pocetna stranica za vlasnika</div>} />
-      <Route path="/administrator" element={<div>Pocetna stranica za administratora</div>} />
-      <Route path="/kurir" element={<div>Pocetna stranica za kurira</div>} />
-     
-     </Routes>
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/kupac" element={<div>Pocetna stranica za kupca</div>} />
+        <Route path="/vlasnik" element={<div>Pocetna stranica za vlasnika</div>} />
+        <Route path="/administrator" element={<div>Pocetna stranica za administratora</div>} />
+        <Route path="/kurir" element={<div>Pocetna stranica za kurira</div>} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+      </Routes>
     </BrowserRouter>
->>>>>>> origin/main
   );
 }
 
