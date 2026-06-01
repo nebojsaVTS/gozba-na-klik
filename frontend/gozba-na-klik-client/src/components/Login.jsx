@@ -1,12 +1,25 @@
 import "./Login.scss";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [logoutMessage, setLogoutMessage] = useState();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.logoutMessage) {
+      setLogoutMessage(location.state.logoutMessage);
+
+      const timer = setTimeout(() => {
+        setLogoutMessage("");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,6 +45,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      {logoutMessage && <p className="logout-toast">{logoutMessage}</p>}
       <div className="login-card">
         <h2>Prijava</h2>
 
