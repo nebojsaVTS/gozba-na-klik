@@ -16,12 +16,20 @@ public class AdminUsersController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<User>> GetAllUsers()
+    public ActionResult GetAllUsers()
     {
-        List<User> users = _context.Users.ToList();
+        var users = _context.Users
+            .Select(u => new
+            {
+                u.Id,
+                u.Username,
+                u.Email,
+                u.Role
+            })
+            .ToList();
 
         return Ok(users);
     }
 
-    
+
 }
