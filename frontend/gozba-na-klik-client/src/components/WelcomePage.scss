@@ -1,82 +1,121 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
+.welcome-page {
+  min-height: 100vh;
+  background-color: #fce4cb;
+  padding: 40px;
 
-  background-image: url("/src/assets/Hrana1.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+
+.welcome-card {
   width: 100%;
-  background: rgba(255, 245, 242, 0.75);
-  z-index: -1;
+  max-width: 1000px;
+  min-height: 700px;
+  max-height: 800px;
+
+  display: flex;
+
+  background-color: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
-.welcome-container {
-  height: 100vh;
+.welcome-content {
+  width: 45%;
+  padding: 60px 50px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: 20px;
 }
 
-h1 {
-  color: #b62504;
-  font-size: 48px;
+.welcome-image {
+  width: 55%;
+  background-image: url(../assets/Hrana1.jpg);
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+  position: relative;
 }
 
-.subtitle {
-  font-size: 18px;
-  color: #0f0f0f;
-  padding: 10px 18px;
-  border-radius: 12px;
-  backdrop-filter: blur(6px);
-  background: rgba(221, 216, 216, 0.25);
+.welcome-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to right,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.75) 4%,
+    rgba(255, 255, 255, 0) 10%
+  );
 }
 
-.buttons {
+.welcome-title {
+  font-family: Georgia, "Times New Roman", Times, serif;
   display: flex;
-  gap: 15px;
+  flex-direction: column;
+  line-height: 1;
+  margin: 0 auto 36px;
+  width: fit-content;
+  color: #332923;
 }
 
-button {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  background-color: #ff5a36;
-  color: white;
+.title-main {
+  font-size: 50px;
+}
+
+.title-accent {
+  font-size: 32px;
+  color: #f26a1b;
+  text-align: right;
+  width: 100%;
+}
+
+.welcome-content .subtitle {
+  font-size: 17px;
+  line-height: 1.5;
+  color: #5f5148;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.welcome-actions button {
+  width: 100%;
+  padding: 14px 18px;
+
   font-size: 16px;
+  font-weight: 600;
+
+  border-radius: 10px;
+
   cursor: pointer;
+  transition: 0.2s ease;
 }
 
-button:hover {
-  background-color: #e14b2a;
+.register-button {
+  border: none;
+  background-color: #f26a1b;
+  color: white;
 }
-@media (max-width: 768px) {
-  h1 {
-    font-size: 34px;
-    text-align: center;
-  }
 
-  .subtitle {
-    font-size: 16px;
-    text-align: center;
-    padding: 0 20px;
-  }
+.register-button:hover {
+  background-color: #d95b14;
+}
 
-  .buttons {
-    flex-direction: column;
-    width: 80%;
-  }
+.login-button {
+  border: 2px solid #f26a1b;
+  background-color: white;
+  color: #f26a1b;
+}
 
-  button {
-    width: 100%;
-  }
+.login-button:hover {
+  background-color: #fff3eb;
 }
