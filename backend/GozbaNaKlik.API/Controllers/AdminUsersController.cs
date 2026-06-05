@@ -30,6 +30,43 @@ public class AdminUsersController : ControllerBase
 
         return Ok(users);
     }
+    // POST: api/admin/users
+    [HttpPost]
+    public IActionResult CreateUser([FromBody] User user)
+    {
+        if (user == null)
+        {
+            return BadRequest("User object is null");
+        }
 
+        if (string.IsNullOrEmpty(user.Username) ||
+            string.IsNullOrEmpty(user.Password) ||
+            string.IsNullOrEmpty(user.Email) ||
+            string.IsNullOrEmpty(user.Role))
+        {
+            return BadRequest("Sva polja su obavezna");
+        }
+
+        // opcionalno: provera da li user već postoji
+        var existingUser = _context.Users
+            .FirstOrDefault(u => u.Username == user.Username);
+
+        if (existingUser != null)
+        {
+            return BadRequest("Korisnik već postoji");
+        }
+
+        _context.Users.Add(user);
+        _context.SaveChanges();
+
+        // vraćamo bez password-a (bezbednije)
+        return Ok(new
+        {
+            user.Id,
+            user.Username,
+            user.Email,
+            user.Role
+        });
+    }
 
 }
