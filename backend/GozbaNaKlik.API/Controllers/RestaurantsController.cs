@@ -18,6 +18,7 @@ public class RestaurantsController : ControllerBase
     }
     // TODO: Obezbediti pristup samo administratorima
     // kada bude implementirana autentikacija i autorizacija (JWT).
+
     [HttpPost]
     public IActionResult CreateRestaurant(CreateRestaurantDto dto)
     {
@@ -49,6 +50,59 @@ public class RestaurantsController : ControllerBase
         _context.Restaurants.Add(restaurant);
         _context.SaveChanges();
 
-        return CreatedAtAction(nameof(CreateRestaurant), new { id = restaurant.Id }, restaurant);
+        var response = new RestaurantResponseDto
+        {
+            Id = restaurant.Id,
+            Name = restaurant.Name,
+            Address = restaurant.Address,
+            PhoneNumber = restaurant.PhoneNumber,
+            OwnerId = restaurant.OwnerId,
+            OwnerUsername = owner.Username
+        };
+
+        return CreatedAtAction(nameof(CreateRestaurant), new { id = restaurant.Id }, response);
+    }
+
+    // TODO: Obezbediti pristup samo administratorima
+    // kada bude implementirana autentikacija i autorizacija (JWT).
+    [HttpPut("{id}")]
+    public IActionResult UpdateRestaurant(int id, UpdateRestaurantDto dto)
+    {
+        var restaurant = _context.Restaurants.FirstOrDefault(r => r.Id == id);
+
+        if (restaurant == null)
+        {
+            return NotFound("Restoran ne postoji.");
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.Name))
+        {
+            return BadRequest("Naziv restorana je obavezan.");
+        }
+
+        restaurant.Name = dto.Name;
+        restaurant.Address = dto.Address;
+        restaurant.PhoneNumber = dto.PhoneNumber;
+
+        _context.SaveChanges();
+
+        return Ok(restaurant);
+    }
+    // TODO: Obezbediti pristup samo administratorima
+    // kada bude implementirana autentikacija i autorizacija (JWT).
+    [HttpDelete("{id}")]
+    public IActionResult DeleteRestaurant(int id)
+    {
+        var restaurant = _context.Restaurants.FirstOrDefault(r => r.Id == id);
+
+        if (restaurant == null)
+        {
+            return NotFound("Restoran ne postoji.");
+        }
+
+        _context.Restaurants.Remove(restaurant);
+        _context.SaveChanges();
+
+        return Ok("Restoran je uspešno obrisan.");
     }
 }
