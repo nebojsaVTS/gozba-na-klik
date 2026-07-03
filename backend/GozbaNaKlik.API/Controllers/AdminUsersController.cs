@@ -15,6 +15,7 @@ public class AdminUsersController : ControllerBase
         _context = context;
     }
 
+    // GET: api/admin/users
     [HttpGet]
     public ActionResult GetAllUsers()
     {
@@ -30,6 +31,7 @@ public class AdminUsersController : ControllerBase
 
         return Ok(users);
     }
+
     // POST: api/admin/users
     [HttpPost]
     public IActionResult CreateUser([FromBody] User user)
@@ -47,7 +49,6 @@ public class AdminUsersController : ControllerBase
             return BadRequest("Sva polja su obavezna");
         }
 
-        // opcionalno: provera da li user već postoji
         var existingUser = _context.Users
             .FirstOrDefault(u => u.Username == user.Username);
 
@@ -59,7 +60,6 @@ public class AdminUsersController : ControllerBase
         _context.Users.Add(user);
         _context.SaveChanges();
 
-        // vraćamo bez password-a (bezbednije)
         return Ok(new
         {
             user.Id,
@@ -68,5 +68,4 @@ public class AdminUsersController : ControllerBase
             user.Role
         });
     }
-
 }
