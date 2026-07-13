@@ -1,5 +1,6 @@
 ﻿using GozbaNaKlik.API.Data;
 using GozbaNaKlik.API.DTOs;
+using GozbaNaKlik.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using GozbaNaKlik.API.Models;
@@ -11,11 +12,28 @@ namespace GozbaNaKlik.API.Controllers;
 public class RestaurantsController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IRestaurantRepository _restaurantRepository;
 
-    public RestaurantsController(AppDbContext context)
+    public RestaurantsController(AppDbContext context, IRestaurantRepository restaurantRepository)
     {
         _context = context;
+        _restaurantRepository = restaurantRepository;
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetByOwner([FromQuery] int ownerId)
+    {
+        var restaurants = await _restaurantRepository.GetByOwnerId(ownerId);
+
+        var result = restaurants.Select(r => new RestaurantListItemDto
+        {
+            Name = r.Name,
+            CoverPhotoUrl = r.CoverPhotoUrl
+        });
+
+        return Ok(result);
+    }
+
     // TODO: Obezbediti pristup samo administratorima
     // kada bude implementirana autentikacija i autorizacija (JWT).
 
