@@ -1,5 +1,5 @@
-
 using GozbaNaKlik.API.Data;
+using GozbaNaKlik.API.DTOs;
 using GozbaNaKlik.API.Models;
 using GozbaNaKlik.API.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +51,36 @@ namespace GozbaNaKlik.API.Controllers
                 userId = user.Id,
                 username = user.Username,
                 role = user.Role
+            });
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Username) ||
+                string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest("Korisnicko ime i lozinka su obavezni.");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Username == request.Username);
+
+            if (user == null)
+            {
+                return Unauthorized("Neispravno korisnicko ime ili lozinka.");
+            }
+
+            if (user.Password != request.Password)
+            {
+                return Unauthorized("Neispravno korisnicko ime ili lozinka");
+            }
+
+            return Ok(new
+            {
+                user.Id,
+                user.Username,
+                user.Email,
+                user.Role
             });
         }
     }
