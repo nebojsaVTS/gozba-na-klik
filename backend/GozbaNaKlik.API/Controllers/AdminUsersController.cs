@@ -1,4 +1,4 @@
-﻿using GozbaNaKlik.API.Data;
+using GozbaNaKlik.API.Data;
 using GozbaNaKlik.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +49,7 @@ public class AdminUsersController : ControllerBase
             return BadRequest("Sva polja su obavezna");
         }
 
+        // opcionalno: provera da li user već postoji
         var existingUser = _context.Users
             .FirstOrDefault(u => u.Username == user.Username);
 
@@ -60,6 +61,7 @@ public class AdminUsersController : ControllerBase
         _context.Users.Add(user);
         _context.SaveChanges();
 
+        // vraćamo bez password-a (bezbednije)
         return Ok(new
         {
             user.Id,
