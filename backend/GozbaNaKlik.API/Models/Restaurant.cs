@@ -10,6 +10,8 @@
 
         public string PhoneNumber { get; set; }
 
+        public string? CoverPhotoUrl { get; set; }
+
         public int OwnerId { get; set; }
 
         public User Owner { get; set; }
