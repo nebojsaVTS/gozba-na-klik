@@ -1,4 +1,4 @@
-﻿using GozbaNaKlik.API.Data;
+using GozbaNaKlik.API.Data;
 using GozbaNaKlik.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +15,7 @@ public class AdminUsersController : ControllerBase
         _context = context;
     }
 
+    // GET: api/admin/users
     [HttpGet]
     public ActionResult GetAllUsers()
     {
@@ -30,6 +31,7 @@ public class AdminUsersController : ControllerBase
 
         return Ok(users);
     }
+
     // POST: api/admin/users
     [HttpPost]
     public IActionResult CreateUser([FromBody] User user)
@@ -68,5 +70,4 @@ public class AdminUsersController : ControllerBase
             user.Role
         });
     }
-
 }
