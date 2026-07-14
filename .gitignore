@@ -427,3 +427,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Lokalna konfiguracija sa tajnama (connection string sa DB lozinkom)
+backend/GozbaNaKlik.API/appsettings.Development.json
