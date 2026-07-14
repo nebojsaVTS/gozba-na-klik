@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Register.scss";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../api";
 
 function Register() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function Register() {
     });
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     if (
@@ -33,18 +34,41 @@ function Register() {
       return;
     }
 
-    setMessage("Uspesna registracija!");
-    setIsError(false);
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    setFormData({
-      username: "",
-      password: "",
-      email: "",
-    });
+      const data = await response.json();
 
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
+      if (!response.ok) {
+        const errorMessage =
+          data.message ||
+          Object.values(data.errors ?? {}).flat().join(" ") ||
+          "Registracija nije uspela.";
+        setMessage(errorMessage);
+        setIsError(true);
+        return;
+      }
+
+      setMessage(data.message || "Uspesna registracija!");
+      setIsError(false);
+
+      setFormData({
+        username: "",
+        password: "",
+        email: "",
+      });
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+    } catch {
+      setMessage("Greška prilikom povezivanja sa serverom.");
+      setIsError(true);
+    }
   }
 
   return (

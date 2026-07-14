@@ -1,4 +1,6 @@
 using GozbaNaKlik.API.Data;
+using GozbaNaKlik.API.DTOs;
+using GozbaNaKlik.API.Helpers;
 using GozbaNaKlik.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,37 +36,30 @@ public class AdminUsersController : ControllerBase
 
     // POST: api/admin/users
     [HttpPost]
-    public IActionResult CreateUser([FromBody] User user)
+    public async Task<IActionResult> CreateUser([FromBody] CreateAdminUserDto dto)
     {
-        if (user == null)
+        if (!ModelState.IsValid)
         {
-            return BadRequest("User object is null");
+            return BadRequest(ModelState);
         }
 
-        if (string.IsNullOrEmpty(user.Username) ||
-            string.IsNullOrEmpty(user.Password) ||
-            string.IsNullOrEmpty(user.Email) ||
-            string.IsNullOrEmpty(user.Role))
+        if (!UserRoles.All.Contains(dto.Role))
         {
-            return BadRequest("Sva polja su obavezna");
+            return BadRequest($"Nepoznata rola. Dozvoljene role su: {string.Join(", ", UserRoles.All)}");
         }
 
-        // opcionalno: provera da li user već postoji
-        var existingUser = _context.Users
-            .FirstOrDefault(u => u.Username == user.Username);
+        var (success, error, user) = await UserRegistration.TryCreateUserAsync(
+            _context, dto.Username, dto.Email, dto.Password, dto.Role);
 
-        if (existingUser != null)
+        if (!success)
         {
-            return BadRequest("Korisnik već postoji");
+            return Conflict(new { message = error });
         }
-
-        _context.Users.Add(user);
-        _context.SaveChanges();
 
         // vraćamo bez password-a (bezbednije)
         return Ok(new
         {
-            user.Id,
+            user!.Id,
             user.Username,
             user.Email,
             user.Role

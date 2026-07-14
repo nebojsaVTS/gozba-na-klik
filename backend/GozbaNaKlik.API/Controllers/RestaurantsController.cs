@@ -34,15 +34,40 @@ public class RestaurantsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var restaurant = await _context.Restaurants.FindAsync(id);
+
+        if (restaurant == null)
+        {
+            return NotFound("Restoran ne postoji.");
+        }
+
+        var owner = await _context.Users.FindAsync(restaurant.OwnerId);
+
+        var response = new RestaurantResponseDto
+        {
+            Id = restaurant.Id,
+            Name = restaurant.Name,
+            Address = restaurant.Address,
+            PhoneNumber = restaurant.PhoneNumber,
+            OwnerId = restaurant.OwnerId,
+            OwnerUsername = owner?.Username ?? string.Empty
+        };
+
+        return Ok(response);
+    }
+
     // TODO: Obezbediti pristup samo administratorima
     // kada bude implementirana autentikacija i autorizacija (JWT).
 
     [HttpPost]
     public IActionResult CreateRestaurant(CreateRestaurantDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Name))
+        if (!ModelState.IsValid)
         {
-            return BadRequest("Naziv restorana je obavezan.");
+            return BadRequest(ModelState);
         }
 
         var owner = _context.Users.FirstOrDefault(u => u.Id == dto.OwnerId);
@@ -52,7 +77,7 @@ public class RestaurantsController : ControllerBase
             return BadRequest("Vlasnik sa tim ID ne postoji.");
         }
 
-        if (owner.Role != "Vlasnik restorana")
+        if (owner.Role != UserRoles.VlasnikRestorana)
         {
             return BadRequest("Izabrani korisnik nije vlasnik restorana.");
         }
@@ -78,7 +103,7 @@ public class RestaurantsController : ControllerBase
             OwnerUsername = owner.Username
         };
 
-        return CreatedAtAction(nameof(CreateRestaurant), new { id = restaurant.Id }, response);
+        return CreatedAtAction(nameof(GetById), new { id = restaurant.Id }, response);
     }
 
     // TODO: Obezbediti pristup samo administratorima
@@ -93,9 +118,9 @@ public class RestaurantsController : ControllerBase
             return NotFound("Restoran ne postoji.");
         }
 
-        if (string.IsNullOrWhiteSpace(dto.Name))
+        if (!ModelState.IsValid)
         {
-            return BadRequest("Naziv restorana je obavezan.");
+            return BadRequest(ModelState);
         }
 
         restaurant.Name = dto.Name;

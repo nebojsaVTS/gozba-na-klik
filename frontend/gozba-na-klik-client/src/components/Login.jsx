@@ -1,6 +1,7 @@
 import "./Login.scss";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../api";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -21,7 +22,7 @@ const Login = () => {
     }
   }, [location.state]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (username.trim() === "" || password.trim() === "") {
@@ -31,16 +32,28 @@ const Login = () => {
 
     setMessage("");
 
-    // TODO: Trenutno nema backend logike koja vraća ulogu korisnika.
-    // Privremeno koristimo fiksnu vrednost za testiranje redirect-a.
-    // Ovo će biti zamenjeno kada se implementira backend login.
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    const uloga = "KUPAC";
+      if (!response.ok) {
+        const errorText = await response.text();
+        setMessage(errorText || "Neispravno korisničko ime ili lozinka.");
+        return;
+      }
 
-    if (uloga === "KUPAC") navigate("/kupac");
-    else if (uloga === "VLASNIK RESTORANA") navigate("/vlasnik");
-    else if (uloga === "ADMINISTRATOR") navigate("/administrator");
-    else if (uloga === "KURIR") navigate("/kurir");
+      const user = await response.json();
+
+      if (user.role === "Kupac") navigate("/kupac");
+      else if (user.role === "Vlasnik restorana") navigate("/vlasnik");
+      else if (user.role === "Administrator") navigate("/administrator");
+      else if (user.role === "Kurir") navigate("/kurir");
+    } catch {
+      setMessage("Greška prilikom povezivanja sa serverom.");
+    }
   };
 
   return (
