@@ -19,4 +19,11 @@ public class RestaurantRepository : IRestaurantRepository
             .Where(r => r.OwnerId == ownerId)
             .ToListAsync();
     }
+
+    public async Task<List<Restaurant>> GetAllAsync()
+    {
+        return await _context.Restaurants
+            .Include(r => r.Owner)
+            .ToListAsync();
+    }
 }

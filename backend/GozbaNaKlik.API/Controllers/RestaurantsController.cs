@@ -34,6 +34,25 @@ public class RestaurantsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("all")]
+
+    public async Task<IActionResult> GetAll()
+    {
+        var restaurants = await _restaurantRepository.GetAllAsync();
+
+        var result = restaurants.Select(r => new RestaurantResponseDto
+        {
+            Id = r.Id,
+            Name = r.Name,
+            Address = r.Address,
+            PhoneNumber = r.PhoneNumber,
+            OwnerId = r.OwnerId,
+            OwnerUsername = r.Owner != null? r.Owner.Username : string.Empty
+        });
+
+        return Ok(result);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
