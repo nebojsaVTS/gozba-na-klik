@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
+import MojProfil from "./components/MojProfil";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         />
 
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/moj-profil" element={<MojProfil />} />
       </Routes>
     </BrowserRouter>
   );
