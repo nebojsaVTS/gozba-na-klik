@@ -4,6 +4,7 @@ const UserHomePage = ({ title }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("gozbaUser");
     navigate("/login", { state: { logoutMessage: "Uspešno ste se odjavili" } });
   };
 
