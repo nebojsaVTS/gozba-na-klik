@@ -17,7 +17,12 @@ function App() {
 
         <Route
           path="/kupac"
-          element={<UserHomePage title="Početna stranica kupca" />}
+          element={
+            <UserHomePage
+              title="Početna stranica kupca"
+              showRestaurants={true}
+            />
+          }
         />
         <Route
           path="/vlasnik"
