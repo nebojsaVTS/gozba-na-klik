@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
+import MojeAdrese from "./components/MojeAdrese";
 
 function App() {
   return (
@@ -29,8 +30,9 @@ function App() {
           path="/kurir"
           element={<UserHomePage title="Pocetna stranica za kurira" />}
         />
-
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/moje-adrese" element={<MojeAdrese />} />
+
       </Routes>
     </BrowserRouter>
   );
