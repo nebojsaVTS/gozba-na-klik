@@ -20,6 +20,16 @@ namespace GozbaNaKlik.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMenuItem(CreateMenuItemDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+            {
+                return BadRequest("Naziv jela je obavezan.");
+            }
+
+            if (dto.Price <= 0)
+            {
+                return BadRequest("Cena jela mora biti veća od 0.");
+            }
+
             var restaurant = await _context.Restaurants.FindAsync(dto.RestaurantId);
 
             if (restaurant == null)
@@ -83,6 +93,15 @@ namespace GozbaNaKlik.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMenuItem(int id, UpdateMenuItemDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.Name))
+            {
+                return BadRequest("Naziv jela je obavezan.");
+            }
+
+            if (dto.Price <= 0)
+            {
+                return BadRequest("Cena jela mora biti veća od 0.");
+            }
             var menuItem = await _context.MenuItems.FindAsync(id);
 
             if (menuItem == null)
