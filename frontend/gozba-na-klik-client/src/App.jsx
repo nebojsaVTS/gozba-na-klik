@@ -4,6 +4,8 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
+import CustomerRestaurants from "./components/CustomerRestaurants";
+import RestaurantMenu from "./components/RestaurantMenu";
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
           path="/kurir"
           element={<UserHomePage title="Pocetna stranica za kurira" />}
         />
+        <Route path="/restaurants" element={<CustomerRestaurants />} />
+        <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
 
         <Route path="/admin/users" element={<AdminUsers />} />
       </Routes>
