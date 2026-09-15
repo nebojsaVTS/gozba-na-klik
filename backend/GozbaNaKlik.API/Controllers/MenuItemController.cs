@@ -79,5 +79,51 @@ namespace GozbaNaKlik.API.Controllers
 
             return Ok(menuItems);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateMenuItem(int id, UpdateMenuItemDto dto)
+        {
+            var menuItem = await _context.MenuItems.FindAsync(id);
+
+            if (menuItem == null)
+            {
+                return NotFound("Jelo sa tim ID ne postoji.");
+            }
+
+            menuItem.Name = dto.Name;
+            menuItem.Description = dto.Description;
+            menuItem.Price = dto.Price;
+            menuItem.ImageUrl = dto.ImageUrl;
+
+            await _context.SaveChangesAsync();
+
+            var response = new MenuItemResponseDto
+            {
+                Id = menuItem.Id,
+                Name = menuItem.Name,
+                Description = menuItem.Description,
+                Price = menuItem.Price,
+                ImageUrl = menuItem.ImageUrl,
+                RestaurantId = menuItem.RestaurantId
+            };
+
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMenuItem(int id)
+        {
+            var menuItem = await _context.MenuItems.FindAsync(id);
+
+            if (menuItem == null)
+            {
+                return NotFound("Jelo sa tim ID ne postoji.");
+            }
+
+            _context.MenuItems.Remove(menuItem);
+            await _context.SaveChangesAsync();
+
+            return Ok("Jelo je uspešno obrisano.");
+        }
     }
 }
