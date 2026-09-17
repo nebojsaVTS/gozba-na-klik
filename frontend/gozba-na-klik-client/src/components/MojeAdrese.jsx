@@ -1,3 +1,4 @@
+import "./MojeAdrese.scss";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../api";
@@ -156,67 +157,96 @@ function MojeAdrese() {
     return null;
   }
 
-  return (
-    <div>
-      <h2>Moje adrese</h2>
 
-      {loadError && <p className="error">{loadError}</p>}
+   return (
+    <div className="adrese-container">
+      <div className="adrese-content">
+        <div className="adrese-header">
+          <button type="button" className="adrese-back-button" onClick={() => navigate("/kupac")}>
+            ← Nazad
+          </button>
+          <h1>Moje adrese</h1>
+          <p className="adrese-subtitle">Upravljaj svojim lokacijama za dostavu</p>
+        </div>
 
-      <ul>
-        {addresses.map((address) => (
-          <li key={address.id}>
-            {editingId === address.id ? (
-              <form onSubmit={(e) => handleEditSubmit(e, address.id)}>
-                <input
-                  type="text"
-                  name="street"
-                  placeholder="Ulica i broj"
-                  value={editFormData.street}
-                  onChange={handleEditChange}
-                />
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="Grad"
-                  value={editFormData.city}
-                  onChange={handleEditChange}
-                />
-                <button type="submit">Sačuvaj</button>
-                <button type="button" onClick={cancelEditing}>Otkaži</button>
-                {editError && <p className="error">{editError}</p>}
-              </form>
-            ) : (
-              <>
-                <span>{address.street}, {address.city}</span>
-                <button type="button" onClick={() => startEditing(address)}>Izmeni</button>
-                <button type="button" onClick={() => handleDelete(address.id)}>Obriši</button>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
+        {loadError && <p className="adrese-error">{loadError}</p>}
 
-      <h3>Dodaj novu adresu</h3>
-      <form onSubmit={handleAddSubmit}>
-        <input
-          type="text"
-          name="street"
-          placeholder="Ulica i broj"
-          value={formData.street}
-          onChange={handleAddChange}
-        />
-        <input
-          type="text"
-          name="city"
-          placeholder="Grad"
-          value={formData.city}
-          onChange={handleAddChange}
-        />
-        <button type="submit">Dodaj adresu</button>
-        {formError && <p className="error">{formError}</p>}
-      </form>
+        {addresses.length === 0 && !loadError && (
+          <p className="adrese-empty">Još uvek nemaš sačuvanih adresa.</p>
+        )}
+
+        <div className="adrese-list">
+          {addresses.map((address) => (
+            <div className="adresa-card" key={address.id}>
+              {editingId === address.id ? (
+                <form className="adresa-edit-form" onSubmit={(e) => handleEditSubmit(e, address.id)}>
+                  <input
+                    type="text"
+                    name="street"
+                    placeholder="Ulica i broj"
+                    value={editFormData.street}
+                    onChange={handleEditChange}
+                  />
+                  <input
+                    type="text"
+                    name="city"
+                    placeholder="Grad"
+                    value={editFormData.city}
+                    onChange={handleEditChange}
+                  />
+                  <div className="adresa-actions">
+                    <button type="submit" className="adresa-save-button">Sačuvaj</button>
+                    <button type="button" className="adresa-cancel-button" onClick={cancelEditing}>
+                      Otkaži
+                    </button>
+                  </div>
+                  {editError && <p className="adrese-error">{editError}</p>}
+                </form>
+              ) : (
+                <>
+                  <div className="adresa-info">
+                    <span className="adresa-street">{address.street}</span>
+                    <span className="adresa-city">{address.city}</span>
+                  </div>
+                  <div className="adresa-actions">
+                    <button type="button" className="adresa-edit-button" onClick={() => startEditing(address)}>
+                      Izmeni
+                    </button>
+                    <button type="button" className="adresa-delete-button" onClick={() => handleDelete(address.id)}>
+                      Obriši
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="adresa-card adresa-new">
+          <h2>Dodaj novu adresu</h2>
+          <form onSubmit={handleAddSubmit}>
+            <input
+              type="text"
+              name="street"
+              placeholder="Ulica i broj"
+              value={formData.street}
+              onChange={handleAddChange}
+            />
+            <input
+              type="text"
+              name="city"
+              placeholder="Grad"
+              value={formData.city}
+              onChange={handleAddChange}
+            />
+            <button type="submit" className="adresa-add-button">Dodaj adresu</button>
+            {formError && <p className="adrese-error">{formError}</p>}
+          </form>
+        </div>
+      </div>
     </div>
   );
-}
+};
+
 
 export default MojeAdrese;
