@@ -5,6 +5,7 @@ const CustomerHomePage = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem("gozbaUser");
     navigate("/login", {
       state: { logoutMessage: "Uspešno ste se odjavili." },
     });
@@ -38,11 +39,14 @@ const CustomerHomePage = () => {
             <p>Pronađi restoran i pogledaj jelovnik</p>
           </button>
 
-          <button className="customer-option-card" type="button" disabled>
-            <h2>Moje adrese</h2>
-            <p>Upravljaj adresama za dostavu</p>
-            <span>Uskoro</span>
-          </button>
+          <button
+              className="customer-option-card"
+              type="button"
+              onClick={() => navigate("/moje-adrese")}
+              >
+                <h2>Moje adrese</h2>
+                <p>Upravljaj adresama za dostavu</p>
+              </button>
 
           <button className="customer-option-card" type="button" disabled>
             <h2>Moje porudžbine</h2>
