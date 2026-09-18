@@ -2,6 +2,7 @@
 using GozbaNaKlik.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GozbaNaKlik.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915191306_CreateAddressTable")]
+    partial class CreateAddressTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,38 +48,6 @@ namespace GozbaNaKlik.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Addresses");
-                });
-
-            modelBuilder.Entity("GozbaNaKlik.API.Models.MenuItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("RestaurantId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RestaurantId");
-
-                    b.ToTable("MenuItems");
                 });
 
             modelBuilder.Entity("GozbaNaKlik.API.Models.Restaurant", b =>
@@ -178,17 +149,6 @@ namespace GozbaNaKlik.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GozbaNaKlik.API.Models.MenuItem", b =>
-                {
-                    b.HasOne("GozbaNaKlik.API.Models.Restaurant", "Restaurant")
-                        .WithMany("MenuItems")
-                        .HasForeignKey("RestaurantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Restaurant");
-                });
-
             modelBuilder.Entity("GozbaNaKlik.API.Models.Restaurant", b =>
                 {
                     b.HasOne("GozbaNaKlik.API.Models.User", "Owner")
@@ -198,11 +158,6 @@ namespace GozbaNaKlik.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("GozbaNaKlik.API.Models.Restaurant", b =>
-                {
-                    b.Navigation("MenuItems");
                 });
 #pragma warning restore 612, 618
         }

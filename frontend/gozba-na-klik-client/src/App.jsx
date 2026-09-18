@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
+import MojeAdrese from "./components/MojeAdrese";
 import MojProfil from "./components/MojProfil";
 import RestaurantsOverview from "./components/RestaurantsOverview";
 import CreateRestaurant from "./components/CreateRestaurant";
@@ -36,10 +37,8 @@ function App() {
         <Route path="/restaurants" element={<CustomerRestaurants />} />
         <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
 
-        <Route 
-          path="/admin/users" 
-          element={<AdminUsers />}
-           />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/moje-adrese" element={<MojeAdrese />} />
 
         <Route
           path="/admin/restaurants"
