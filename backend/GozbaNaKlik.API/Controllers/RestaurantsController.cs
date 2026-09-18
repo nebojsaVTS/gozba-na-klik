@@ -4,6 +4,7 @@ using GozbaNaKlik.API.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using GozbaNaKlik.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GozbaNaKlik.API.Controllers;
 
@@ -21,14 +22,45 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByOwner([FromQuery] int ownerId)
+    public async Task<IActionResult> GetRestaurants([FromQuery] int? ownerId)
     {
-        var restaurants = await _restaurantRepository.GetByOwnerId(ownerId);
+        IEnumerable<Restaurant> restaurants;
+
+        if (ownerId.HasValue)
+        {
+            restaurants = await _restaurantRepository.GetByOwnerId(ownerId.Value);
+        }
+        else
+        {
+            restaurants = await _context.Restaurants
+                .AsNoTracking()
+                .ToListAsync();
+        }
 
         var result = restaurants.Select(r => new RestaurantListItemDto
         {
+            Id = r.Id,
             Name = r.Name,
             CoverPhotoUrl = r.CoverPhotoUrl
+        });
+
+        return Ok(result);
+    }
+
+    [HttpGet("all")]
+
+    public async Task<IActionResult> GetAll()
+    {
+        var restaurants = await _restaurantRepository.GetAllAsync();
+
+        var result = restaurants.Select(r => new RestaurantResponseDto
+        {
+            Id = r.Id,
+            Name = r.Name,
+            Address = r.Address,
+            PhoneNumber = r.PhoneNumber,
+            OwnerId = r.OwnerId,
+            OwnerUsername = r.Owner != null? r.Owner.Username : string.Empty
         });
 
         return Ok(result);

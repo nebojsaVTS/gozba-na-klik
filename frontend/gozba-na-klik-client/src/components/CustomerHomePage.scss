@@ -1,0 +1,112 @@
+.customer-home-container {
+  min-height: 100vh;
+  background-color: #fce4cb;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.customer-home-content {
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+}
+
+.customer-home-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.customer-location {
+  display: inline-block;
+  margin: 0;
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  color: #f26a1b;
+  font-weight: 600;
+}
+
+.customer-logout-button {
+  position: absolute;
+  right: 0;
+  padding: 10px 18px;
+  border: 1px solid #f26a1b;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #f26a1b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.customer-logout-button:hover {
+  background-color: #f26a1b;
+  color: #ffffff;
+}
+
+.customer-home-content h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 42px;
+  color: #332923;
+}
+
+.customer-subtitle {
+  margin: 12px 0 36px;
+  font-size: 18px;
+  color: #6b5b52;
+}
+
+.customer-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.customer-option-card {
+  min-height: 180px;
+  padding: 28px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  text-align: center;
+}
+
+.customer-option-card:hover:not(:disabled) {
+  transform: translateY(-4px);
+}
+
+.customer-option-card h2 {
+  margin: 0 0 12px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 26px;
+  color: #332923;
+}
+
+.customer-option-card p {
+  margin: 0 0 14px;
+  font-size: 16px;
+  color: #6b5b52;
+}
+
+.customer-option-card span {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background-color: #fce4cb;
+  color: #f26a1b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.customer-option-card:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
