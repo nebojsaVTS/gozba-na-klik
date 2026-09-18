@@ -1,10 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes , Route } from "react-router-dom";
 import WelcomePage from "./components/WelcomePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
 import MojeAdrese from "./components/MojeAdrese";
+import MojProfil from "./components/MojProfil";
+import RestaurantsOverview from "./components/RestaurantsOverview";
+import CreateRestaurant from "./components/CreateRestaurant";
 import CustomerRestaurants from "./components/CustomerRestaurants";
 import RestaurantMenu from "./components/RestaurantMenu";
 import CustomerHomePage from "./components/CustomerHomePage";
@@ -16,6 +19,7 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+    
 
         <Route path="/kupac" element={<CustomerHomePage />} />
         <Route
@@ -36,6 +40,16 @@ function App() {
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/moje-adrese" element={<MojeAdrese />} />
 
+        <Route
+          path="/admin/restaurants"
+          element={<RestaurantsOverview />}
+          />
+
+        <Route
+          path="/admin/restaurants/new"
+          element={<CreateRestaurant />} />
+
+        <Route path="/moj-profil" element={<MojProfil />} />
       </Routes>
     </BrowserRouter>
   );

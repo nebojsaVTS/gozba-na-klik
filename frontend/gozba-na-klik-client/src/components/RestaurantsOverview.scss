@@ -1,0 +1,27 @@
+.restaurants-overview-container {
+  padding: 30px;
+}
+
+.restaurants-overview-container h2 {
+  margin-bottom: 20px;
+}
+
+.restaurants-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.restaurants-table th,
+.restaurants-table td {
+  border: 1px solid #ccc;
+  padding: 12px;
+  text-align: left;
+}
+
+.restaurants-table th {
+  background-color: #f2f2f2;
+}
+
+.error {
+  color: #d32f2f;
+}
