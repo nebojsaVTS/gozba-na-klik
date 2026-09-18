@@ -46,6 +46,7 @@ const Login = () => {
       }
 
       const user = await response.json();
+      localStorage.setItem("gozbaUser" , JSON.stringify(user));
 
       if (user.role === "Kupac") navigate("/kupac");
       else if (user.role === "Vlasnik restorana") navigate("/vlasnik");

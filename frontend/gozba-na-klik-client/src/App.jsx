@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
+import MojProfil from "./components/MojProfil";
 import RestaurantsOverview from "./components/RestaurantsOverview";
 import CreateRestaurant from "./components/CreateRestaurant";
 import CustomerRestaurants from "./components/CustomerRestaurants";
@@ -49,6 +50,7 @@ function App() {
           path="/admin/restaurants/new"
           element={<CreateRestaurant />} />
 
+        <Route path="/moj-profil" element={<MojProfil />} />
       </Routes>
     </BrowserRouter>
   );
