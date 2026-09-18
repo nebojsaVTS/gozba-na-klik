@@ -1,12 +1,14 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes , Route } from "react-router-dom";
 import WelcomePage from "./components/WelcomePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
+import RestaurantsOverview from "./components/RestaurantsOverview";
 import CustomerRestaurants from "./components/CustomerRestaurants";
 import RestaurantMenu from "./components/RestaurantMenu";
 import CustomerHomePage from "./components/CustomerHomePage";
+
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+    
 
         <Route path="/kupac" element={<CustomerHomePage />} />
         <Route
@@ -32,7 +35,16 @@ function App() {
         <Route path="/restaurants" element={<CustomerRestaurants />} />
         <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
 
-        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route 
+          path="/admin/users" 
+          element={<AdminUsers />}
+           />
+
+        <Route
+          path="/admin/restaurants"
+          element={<RestaurantsOverview />}
+          />
+
       </Routes>
     </BrowserRouter>
   );
