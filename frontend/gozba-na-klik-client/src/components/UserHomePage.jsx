@@ -1,7 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
-const UserHomePage = ({ title }) => {
+const UserHomePage = ({ title, showRestaurants = false }) => {
   const navigate = useNavigate();
+
+  const handleRestaurants = () => {
+    navigate("/restaurants");
+  };
 
   const handleLogout = () => {
     navigate("/login", { state: { logoutMessage: "Uspešno ste se odjavili" } });
@@ -10,6 +14,13 @@ const UserHomePage = ({ title }) => {
   return (
     <div>
       <h2>{title}</h2>
+
+      {showRestaurants && (
+        <button type="button" onClick={handleRestaurants}>
+          Restorani
+        </button>
+      )}
+
       <button type="button" onClick={handleLogout}>
         Odjavi se
       </button>

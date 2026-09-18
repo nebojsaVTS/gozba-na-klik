@@ -6,6 +6,9 @@ import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
 import RestaurantsOverview from "./components/RestaurantsOverview";
 import CreateRestaurant from "./components/CreateRestaurant";
+import CustomerRestaurants from "./components/CustomerRestaurants";
+import RestaurantMenu from "./components/RestaurantMenu";
+import CustomerHomePage from "./components/CustomerHomePage";
 
 function App() {
   return (
@@ -16,10 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
     
 
-        <Route
-          path="/kupac"
-          element={<UserHomePage title="Početna stranica kupca" />}
-        />
+        <Route path="/kupac" element={<CustomerHomePage />} />
         <Route
           path="/vlasnik"
           element={<UserHomePage title="Pocetna stranica za vlasnika" />}
@@ -32,6 +32,8 @@ function App() {
           path="/kurir"
           element={<UserHomePage title="Pocetna stranica za kurira" />}
         />
+        <Route path="/restaurants" element={<CustomerRestaurants />} />
+        <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
 
         <Route 
           path="/admin/users" 
