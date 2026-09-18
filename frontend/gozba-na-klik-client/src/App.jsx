@@ -5,10 +5,10 @@ import Login from "./components/Login";
 import AdminUsers from "./components/AdminUsers";
 import UserHomePage from "./components/UserHomePage";
 import RestaurantsOverview from "./components/RestaurantsOverview";
+import CreateRestaurant from "./components/CreateRestaurant";
 import CustomerRestaurants from "./components/CustomerRestaurants";
 import RestaurantMenu from "./components/RestaurantMenu";
 import CustomerHomePage from "./components/CustomerHomePage";
-
 
 function App() {
   return (
@@ -44,6 +44,10 @@ function App() {
           path="/admin/restaurants"
           element={<RestaurantsOverview />}
           />
+
+        <Route
+          path="/admin/restaurants/new"
+          element={<CreateRestaurant />} />
 
       </Routes>
     </BrowserRouter>
