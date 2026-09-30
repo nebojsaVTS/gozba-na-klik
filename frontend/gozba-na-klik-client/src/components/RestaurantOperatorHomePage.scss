@@ -1,0 +1,111 @@
+.operator-home-container {
+  min-height: 100vh;
+  background-color: #fce4cb;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.operator-home-content {
+  width: 100%;
+  max-width: 700px;
+  text-align: center;
+}
+
+.operator-home-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.operator-home-header h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 36px;
+  color: #332923;
+}
+
+.operator-logout-button {
+  position: absolute;
+  right: 0;
+  padding: 10px 18px;
+  border: 1px solid #f26a1b;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #f26a1b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.operator-logout-button:hover {
+  background-color: #f26a1b;
+  color: #ffffff;
+}
+
+.operator-restaurant-name {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 8px 16px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  color: #f26a1b;
+  font-weight: 600;
+}
+
+.operator-error {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+.operator-orders-count {
+  margin: 12px 0 28px;
+  font-size: 18px;
+  color: #6b5b52;
+}
+
+.operator-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.operator-option-card {
+  min-height: 120px;
+  padding: 24px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  text-align: center;
+}
+
+.operator-option-card:hover:not(:disabled) {
+  transform: translateY(-4px);
+}
+
+.operator-option-card h2 {
+  margin: 0 0 12px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 22px;
+  color: #332923;
+}
+
+.operator-option-card span {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background-color: #fce4cb;
+  color: #f26a1b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.operator-option-card:disabled {
+  cursor: default;
+  opacity: 0.65;
+}
