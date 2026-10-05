@@ -72,16 +72,23 @@ function RestaurantOperatorHomePage() {
         <p className="operator-orders-count">Nove porudžbine: 0</p>
 
         <div className="operator-options">
-          <button className="operator-option-card" type="button" disabled>
-            <h2>Nove porudžbine</h2>
-            <span>Uskoro</span>
-          </button>
+  <button
+    className="operator-option-card"
+    type="button"
+    onClick={() => navigate("/restaurant-operator/orders")}
+  >
+    <h2>Nove porudžbine</h2>
+  </button>
 
-          <button className="operator-option-card" type="button" disabled>
-            <h2>Aktivne porudžbine</h2>
-            <span>Uskoro</span>
-          </button>
-        </div>
+  <button
+    className="operator-option-card"
+    type="button"
+    onClick={() => navigate("/restaurant-operator/orders")}
+  >
+    <h2>Aktivne porudžbine</h2>
+  </button>
+</div>
+
       </div>
     </div>
   );
