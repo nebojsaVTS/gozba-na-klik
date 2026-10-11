@@ -17,6 +17,38 @@ const statusLabels = {
   Completed: "Završena",
 };
 
+function OrderDetails({ order }) {
+  return (
+    <>
+      {order.items.map((item) => (
+        <div className="order-item" key={item.id}>
+          <p className="order-item-title">
+            {item.quantity}x {item.name}
+            {item.variant && ` (${item.variant})`}
+          </p>
+          {item.toppings.length > 0 && (
+            <p className="order-item-detail">
+              Prilozi: {item.toppings.join(", ")}
+            </p>
+          )}
+          {item.note && (
+            <p className="order-item-detail">Napomena: {item.note}</p>
+          )}
+          <p className="order-item-price">Cena: {item.price} RSD</p>
+        </div>
+      ))}
+
+      {order.generalNote && (
+        <p className="order-general-note">
+          Napomena za porudžbinu: {order.generalNote}
+        </p>
+      )}
+
+      <p className="order-total">Ukupno: {order.total} RSD</p>
+    </>
+  );
+}
+
 function RestaurantOrders() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -28,7 +60,14 @@ function RestaurantOrders() {
       navigate("/login");
       return;
     }
-    setUser(JSON.parse(stored));
+
+    const parsedUser = JSON.parse(stored);
+    if (parsedUser.role !== "RestaurantOperator") {
+      navigate("/login");
+      return;
+    }
+
+    setUser(parsedUser);
   }, [navigate]);
 
   useEffect(() => {
@@ -85,31 +124,7 @@ function RestaurantOrders() {
             <div className="order-card" key={order.id}>
               <h3>Porudžbina #{order.id}</h3>
 
-              {order.items.map((item) => (
-                <div className="order-item" key={item.id}>
-                  <p className="order-item-title">
-                    {item.quantity}x {item.name}
-                    {item.variant && ` (${item.variant})`}
-                  </p>
-                  {item.toppings.length > 0 && (
-                    <p className="order-item-detail">
-                      Prilozi: {item.toppings.join(", ")}
-                    </p>
-                  )}
-                  {item.note && (
-                    <p className="order-item-detail">Napomena: {item.note}</p>
-                  )}
-                  <p className="order-item-price">Cena: {item.price} RSD</p>
-                </div>
-              ))}
-
-              {order.generalNote && (
-                <p className="order-general-note">
-                  Napomena za porudžbinu: {order.generalNote}
-                </p>
-              )}
-
-              <p className="order-total">Ukupno: {order.total} RSD</p>
+              <OrderDetails order={order} />
 
               <div className="order-actions">
                 <button
@@ -139,11 +154,12 @@ function RestaurantOrders() {
           )}
 
           {activeOrders.map((order) => (
-            <div className="active-order-row" key={order.id}>
-              <span className="active-order-id">#{order.id}</span>
-              <span className="active-order-status">
-                {statusLabels[order.status]}
-              </span>
+            <div className="order-card" key={order.id}>
+              <h3>
+                Porudžbina #{order.id} — {statusLabels[order.status]}
+              </h3>
+
+              <OrderDetails order={order} />
 
               {order.status === "Accepted" && (
                 <button
