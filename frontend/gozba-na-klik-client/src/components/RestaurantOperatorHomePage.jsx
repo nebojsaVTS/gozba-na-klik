@@ -15,7 +15,14 @@ function RestaurantOperatorHomePage() {
       navigate("/login");
       return;
     }
-    setUser(JSON.parse(stored));
+
+    const parsedUser = JSON.parse(stored);
+    if (parsedUser.role !== "RestaurantOperator") {
+      navigate("/login");
+      return;
+    }
+
+    setUser(parsedUser);
   }, [navigate]);
 
   useEffect(() => {
