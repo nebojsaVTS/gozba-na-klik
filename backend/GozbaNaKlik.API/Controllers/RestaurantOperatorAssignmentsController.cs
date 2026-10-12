@@ -59,12 +59,12 @@ public class RestaurantOperatorAssignmentsController : ControllerBase
             return BadRequest("Restoran sa tim ID ne postoji.");
         }
 
-        bool alreadyAssigned = await _context.RestaurantOperatorAssignments
-            .AnyAsync(a => a.UserId == dto.UserId && a.RestaurantId == dto.RestaurantId);
+        bool alreadyAssignedElsewhere = await _context.RestaurantOperatorAssignments
+            .AnyAsync(a => a.UserId == dto.UserId);
 
-        if (alreadyAssigned)
+        if (alreadyAssignedElsewhere)
         {
-            return BadRequest("Ovaj operater je vec dodeljen ovom restoranu.");
+            return BadRequest("Ovaj operater je vec dodeljen jednom restoranu.");
         }
 
         var assignment = new RestaurantOperatorAssignment
