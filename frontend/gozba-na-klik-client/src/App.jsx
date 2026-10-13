@@ -11,6 +11,7 @@ import CreateRestaurant from "./components/CreateRestaurant";
 import CustomerRestaurants from "./components/CustomerRestaurants";
 import RestaurantMenu from "./components/RestaurantMenu";
 import CustomerHomePage from "./components/CustomerHomePage";
+import CartPage from "./components/CartPage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         />
         <Route path="/restaurants" element={<CustomerRestaurants />} />
         <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
+        <Route path="/cart" element={<CartPage />} />
 
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/moje-adrese" element={<MojeAdrese />} />
@@ -50,6 +52,8 @@ function App() {
           element={<CreateRestaurant />} />
 
         <Route path="/moj-profil" element={<MojProfil />} />
+
+        
       </Routes>
     </BrowserRouter>
   );
