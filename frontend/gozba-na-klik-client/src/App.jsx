@@ -11,6 +11,7 @@ import CreateRestaurant from "./components/CreateRestaurant";
 import CustomerRestaurants from "./components/CustomerRestaurants";
 import RestaurantMenu from "./components/RestaurantMenu";
 import CustomerHomePage from "./components/CustomerHomePage";
+import RestaurantOperatorHomePage from "./components/RestaurantOperatorHomePage";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           element={<CreateRestaurant />} />
 
         <Route path="/moj-profil" element={<MojProfil />} />
+        <Route path="/restaurant-operator" element={<RestaurantOperatorHomePage />} />
       </Routes>
     </BrowserRouter>
   );
