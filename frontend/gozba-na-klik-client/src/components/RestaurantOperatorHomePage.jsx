@@ -2,12 +2,14 @@ import "./RestaurantOperatorHomePage.scss";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../api";
+import { getOrders } from "../services/restaurantOrderService";
 
 function RestaurantOperatorHomePage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [restaurantName, setRestaurantName] = useState("");
   const [loadError, setLoadError] = useState("");
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
 
   useEffect(() => {
     const stored = localStorage.getItem("gozbaUser");
@@ -48,6 +50,17 @@ function RestaurantOperatorHomePage() {
       .catch(() => setLoadError("Greška pri učitavanju podataka o restoranu."));
   }, [user]);
 
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    getOrders().then((orders) => {
+      const pendingCount = orders.filter((order) => order.status === "Pending").length;
+      setNewOrdersCount(pendingCount);
+    });
+  }, [user]);
+
   const handleLogout = () => {
     localStorage.removeItem("gozbaUser");
     navigate("/login", {
@@ -76,19 +89,26 @@ function RestaurantOperatorHomePage() {
         {restaurantName && <p className="operator-restaurant-name">{restaurantName}</p>}
         {loadError && <p className="operator-error">{loadError}</p>}
 
-        <p className="operator-orders-count">Nove porudžbine: 0</p>
+        <p className="operator-orders-count">Nove porudžbine: {newOrdersCount}</p>
 
         <div className="operator-options">
-          <button className="operator-option-card" type="button" disabled>
-            <h2>Nove porudžbine</h2>
-            <span>Uskoro</span>
-          </button>
+  <button
+    className="operator-option-card"
+    type="button"
+    onClick={() => navigate("/restaurant-operator/orders")}
+  >
+    <h2>Nove porudžbine</h2>
+  </button>
 
-          <button className="operator-option-card" type="button" disabled>
-            <h2>Aktivne porudžbine</h2>
-            <span>Uskoro</span>
-          </button>
-        </div>
+  <button
+    className="operator-option-card"
+    type="button"
+    onClick={() => navigate("/restaurant-operator/orders")}
+  >
+    <h2>Aktivne porudžbine</h2>
+  </button>
+</div>
+
       </div>
     </div>
   );
