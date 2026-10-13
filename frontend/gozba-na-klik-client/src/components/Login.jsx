@@ -52,6 +52,7 @@ const Login = () => {
       else if (user.role === "Vlasnik restorana") navigate("/vlasnik");
       else if (user.role === "Administrator") navigate("/administrator");
       else if (user.role === "Kurir") navigate("/kurir");
+      else if (user.role === "RestaurantOperator") navigate("/restaurant-operator");
     } catch {
       setMessage("Greška prilikom povezivanja sa serverom.");
     }

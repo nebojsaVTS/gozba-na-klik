@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes , Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import WelcomePage from "./components/WelcomePage";
 import Register from "./components/Register";
 import Login from "./components/Login";
@@ -11,6 +11,8 @@ import CreateRestaurant from "./components/CreateRestaurant";
 import CustomerRestaurants from "./components/CustomerRestaurants";
 import RestaurantMenu from "./components/RestaurantMenu";
 import CustomerHomePage from "./components/CustomerHomePage";
+import RestaurantOperatorHomePage from "./components/RestaurantOperatorHomePage";
+import RestaurantOrders from "./components/RestaurantOrders";
 import CartPage from "./components/CartPage";
 
 function App() {
@@ -20,23 +22,29 @@ function App() {
         <Route path="/" element={<WelcomePage />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-    
 
         <Route path="/kupac" element={<CustomerHomePage />} />
+
         <Route
           path="/vlasnik"
           element={<UserHomePage title="Pocetna stranica za vlasnika" />}
         />
+
         <Route
           path="/administrator"
           element={<UserHomePage title="Pocetna stranica za administratora" />}
         />
+
         <Route
           path="/kurir"
           element={<UserHomePage title="Pocetna stranica za kurira" />}
         />
+
         <Route path="/restaurants" element={<CustomerRestaurants />} />
-        <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
+        <Route
+          path="/restaurants/:restaurantId"
+          element={<RestaurantMenu />}
+        />
         <Route path="/cart" element={<CartPage />} />
 
         <Route path="/admin/users" element={<AdminUsers />} />
@@ -45,15 +53,24 @@ function App() {
         <Route
           path="/admin/restaurants"
           element={<RestaurantsOverview />}
-          />
+        />
 
         <Route
           path="/admin/restaurants/new"
-          element={<CreateRestaurant />} />
+          element={<CreateRestaurant />}
+        />
 
         <Route path="/moj-profil" element={<MojProfil />} />
 
-        
+        <Route
+          path="/restaurant-operator"
+          element={<RestaurantOperatorHomePage />}
+        />
+
+        <Route
+          path="/restaurant-operator/orders"
+          element={<RestaurantOrders />}
+        />
       </Routes>
     </BrowserRouter>
   );
