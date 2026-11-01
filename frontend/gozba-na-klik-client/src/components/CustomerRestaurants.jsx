@@ -20,13 +20,26 @@ const CustomerRestaurants = () => {
         setLoading(false);
       }
     };
+
     loadRestaurants();
   }, []);
 
   return (
     <div className="restaurants-container">
       <div className="restaurants-content">
-        <h2>Restorani</h2>
+        <div className="restaurants-header">
+          <button
+            type="button"
+            className="restaurants-back-button"
+            onClick={() => navigate("/kupac")}
+          >
+            ← Nazad na početnu
+          </button>
+
+          <h2>Restorani</h2>
+
+          <div className="restaurants-header-placeholder" />
+        </div>
 
         {loading && (
           <p className="restaurants-message">Učitavanje restorana...</p>
