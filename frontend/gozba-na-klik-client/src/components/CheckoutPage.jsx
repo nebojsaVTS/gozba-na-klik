@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_BASE_URL } from "../api";
+import axios from "axios";
+import { createOrder } from "../services/orderService";
 import "./CheckoutPage.scss";
+
+const API_BASE_URL = "http://localhost:5171/api";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -10,72 +13,117 @@ const CheckoutPage = () => {
   const [cart, setCart] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("gozbaUser");
-    const storedCart = localStorage.getItem("gozbaCart");
-
-    if (!storedUser) {
-      navigate("/login");
-      return;
-    }
-
-    if (!storedCart) {
-      navigate("/cart");
-      return;
-    }
-
-    const parsedUser = JSON.parse(storedUser);
-    const parsedCart = JSON.parse(storedCart);
-
-    if (!parsedCart.items || parsedCart.items.length === 0) {
-      navigate("/cart");
-      return;
-    }
-
-    setUser(parsedUser);
-    setCart(parsedCart);
-  }, [navigate]);
+  const [orderError, setOrderError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
+    const loadCheckoutData = async () => {
+      const storedUser = localStorage.getItem("gozbaUser");
+      const storedCart = localStorage.getItem("gozbaCart");
 
-    const loadAddresses = async () => {
+      if (!storedUser) {
+        navigate("/login");
+        return;
+      }
+
+      if (!storedCart) {
+        navigate("/cart");
+        return;
+      }
+
+      const parsedUser = JSON.parse(storedUser);
+      const parsedCart = JSON.parse(storedCart);
+
+      if (!parsedCart.items || parsedCart.items.length === 0) {
+        navigate("/cart");
+        return;
+      }
+
+      setUser(parsedUser);
+      setCart(parsedCart);
+
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/addresses?userId=${user.id}`,
+        const response = await axios.get(
+          `${API_BASE_URL}/addresses?userId=${parsedUser.id}`,
         );
 
-        if (!response.ok) {
-          throw new Error();
+        setAddresses(response.data);
+
+        if (response.data.length > 0) {
+          setSelectedAddressId(response.data[0].id);
         }
-
-        const data = await response.json();
-
-        setAddresses(data);
-
-        if (data.length > 0) {
-          setSelectedAddressId(data[0].id);
-        }
-      } catch {
-        setError("Greška pri učitavanju adresa.");
+      } catch (err) {
+        console.error(err);
+        setError("Greška prilikom učitavanja adresa.");
       } finally {
         setLoading(false);
       }
     };
 
-    loadAddresses();
-  }, [user]);
+    loadCheckoutData();
+  }, [navigate]);
+
+  const handleConfirmOrder = async () => {
+    if (!user || !cart || !selectedAddressId) {
+      setOrderError("Nedostaju podaci za kreiranje porudžbine.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setOrderError("");
+
+      const orderData = {
+        userId: user.id,
+        restaurantId: cart.restaurantId,
+        addressId: selectedAddressId,
+        items: cart.items.map((item) => ({
+          menuItemId: item.menuItemId,
+          quantity: item.quantity,
+          selectedSides: item.selectedSides || [],
+          note: item.note || null,
+        })),
+      };
+
+      const createdOrder = await createOrder(orderData);
+
+      localStorage.removeItem("gozbaCart");
+
+      alert(`Porudžbina #${createdOrder.id} je uspešno poslata.`);
+
+      navigate("/kupac");
+    } catch (err) {
+      console.error(err);
+
+      setOrderError(
+        typeof err.response?.data === "string"
+          ? err.response.data
+          : "Došlo je do greške prilikom slanja porudžbine.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const totalPrice =
-    cart?.items.reduce(
+    cart?.items?.reduce(
       (total, item) => total + item.price * item.quantity,
       0,
     ) || 0;
+
+  if (loading) {
+    return (
+      <div className="checkout-container">
+        <div className="checkout-content">
+          <p className="checkout-message">Učitavanje...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!cart) {
     return null;
@@ -84,103 +132,115 @@ const CheckoutPage = () => {
   return (
     <div className="checkout-container">
       <div className="checkout-content">
-        <button
-          type="button"
-          className="checkout-back-button"
-          onClick={() => navigate("/cart")}
-        >
-          ← Nazad na korpu
-        </button>
+        <div className="checkout-header">
+          <button
+            type="button"
+            className="checkout-back-button"
+            onClick={() => navigate("/cart")}
+          >
+            ← Nazad na korpu
+          </button>
 
-        <h1>Završetak porudžbine</h1>
+          <h2>Potvrda porudžbine</h2>
+
+          <div className="checkout-header-placeholder" />
+        </div>
+
+        {error && <p className="checkout-message error">{error}</p>}
 
         <section className="checkout-section">
-          <h2>Adresa za dostavu</h2>
+          <h3>Adresa za dostavu</h3>
 
-          {loading && <p>Učitavanje adresa...</p>}
-
-          {error && <p className="checkout-error">{error}</p>}
-
-          {!loading && !error && addresses.length === 0 && (
+          {addresses.length === 0 ? (
             <div className="checkout-no-address">
-              <p>Nemaš sačuvanu adresu za dostavu.</p>
+              <p>Nemate sačuvanu adresu za dostavu.</p>
 
               <button
                 type="button"
+                className="add-address-button"
                 onClick={() =>
-                  navigate("/moje-adrese", { state: { returnTo: "/checkout" } })
+                  navigate("/moje-adrese", {
+                    state: { returnTo: "/checkout" },
+                  })
                 }
               >
                 Dodaj adresu
               </button>
             </div>
+          ) : (
+            <div className="checkout-addresses">
+              {addresses.map((address) => (
+                <label
+                  key={address.id}
+                  className={`checkout-address-card ${
+                    selectedAddressId === address.id ? "selected" : ""
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="deliveryAddress"
+                    value={address.id}
+                    checked={selectedAddressId === address.id}
+                    onChange={() => setSelectedAddressId(address.id)}
+                  />
+
+                  <div>
+                    <strong>{address.street}</strong>
+                    <p>{address.city}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
           )}
-
-          <div className="checkout-addresses">
-            {addresses.map((address) => (
-              <label
-                className={`checkout-address-card ${
-                  selectedAddressId === address.id ? "selected" : ""
-                }`}
-                key={address.id}
-              >
-                <input
-                  type="radio"
-                  name="deliveryAddress"
-                  value={address.id}
-                  checked={selectedAddressId === address.id}
-                  onChange={() => setSelectedAddressId(address.id)}
-                />
-
-                <div>
-                  <strong>{address.street}</strong>
-                  <span>{address.city}</span>
-                </div>
-              </label>
-            ))}
-          </div>
         </section>
 
         <section className="checkout-section">
-          <h2>Pregled porudžbine</h2>
+          <h3>Pregled porudžbine</h3>
 
-          <p className="checkout-restaurant">{cart.restaurantName}</p>
+          <div className="checkout-restaurant-name">{cart.restaurantName}</div>
 
           <div className="checkout-items">
             {cart.items.map((item) => (
               <div className="checkout-item" key={item.cartItemId}>
-                <div>
-                  <strong>
-                    {item.quantity}x {item.name}
-                  </strong>
+                <div className="checkout-item-info">
+                  <h4>
+                    {item.quantity} × {item.name}
+                  </h4>
 
                   {item.selectedSides?.length > 0 && (
                     <p>
-                      <b>Prilozi:</b> {item.selectedSides.join(", ")}
+                      <strong>Prilozi:</strong> {item.selectedSides.join(", ")}
                     </p>
                   )}
 
                   {item.note && (
                     <p>
-                      <b>Napomena:</b> {item.note}
+                      <strong>Napomena:</strong> {item.note}
                     </p>
                   )}
                 </div>
 
-                <span>{item.price * item.quantity} RSD</span>
+                <div className="checkout-item-price">
+                  {item.price * item.quantity} RSD
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="checkout-total">Ukupno: {totalPrice} RSD</div>
+          <div className="checkout-total">
+            <strong>Ukupno: {totalPrice} RSD</strong>
+          </div>
         </section>
+
+        {orderError && <p className="checkout-message error">{orderError}</p>}
 
         <button
           type="button"
           className="confirm-order-button"
-          disabled={!selectedAddressId}
+          onClick={handleConfirmOrder}
+          disabled={!selectedAddressId || isSubmitting}
         >
-          Potvrdi porudžbinu
+          {isSubmitting ? "Slanje porudžbine..." : "Potvrdi porudžbinu"}
         </button>
       </div>
     </div>
