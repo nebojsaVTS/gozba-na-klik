@@ -2,33 +2,31 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getMenuItemsByRestaurant } from "../services/menuItemService";
 import { getRestaurantById } from "../services/restaurantService";
+import MenuItemCustomizationModal from "./MenuItemCustomizationModal";
 import "./RestaurantMenu.scss";
 
 const RestaurantMenu = () => {
   const { restaurantId } = useParams();
-
   const navigate = useNavigate();
 
   const [cartItemCount, setCartItemCount] = useState(() => {
     const storedCart = localStorage.getItem("gozbaCart");
 
-    if (!storedCart){
+    if (!storedCart) {
       return 0;
     }
-  
-  const cart = JSON.parse(storedCart);
-  
-  return cart.items.reduce(
-    (total, item) => total + item.quantuty,
-    0
-  );
-});
+
+    const cart = JSON.parse(storedCart);
+
+    return cart.items.reduce((total, item) => total + item.quantity, 0);
+  });
 
   const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [cartMessage, setCartMessage] = useState("");
+  const [selectedMenuItem, setSelectedMenuItem] = useState(null);
 
   useEffect(() => {
     const loadRestaurantData = async () => {
@@ -48,7 +46,7 @@ const RestaurantMenu = () => {
     loadRestaurantData();
   }, [restaurantId]);
 
-  const handleAddToCart = (menuItem) => {
+  const handleAddToCart = (customizedItem) => {
     const storedCart = localStorage.getItem("gozbaCart");
 
     let cart = storedCart
@@ -61,7 +59,7 @@ const RestaurantMenu = () => {
 
     if (String(cart.restaurantId) !== String(restaurantId)) {
       const shouldReplaceCart = window.confirm(
-        "Korpa već sadrži proizvode iz drugog restorana. Da li želite da ispraznite korpu i dodate ovo jelo?"
+        "Korpa već sadrži proizvode iz drugog restorana. Da li želite da ispraznite korpu i dodate ovo jelo?",
       );
 
       if (!shouldReplaceCart) {
@@ -75,18 +73,29 @@ const RestaurantMenu = () => {
       };
     }
 
+    const configurationKey = JSON.stringify({
+      sides: [...customizedItem.selectedSides].sort(),
+      note: customizedItem.note,
+    });
+
     const existingItem = cart.items.find(
-      (item) => item.id === menuItem.id
+      (item) =>
+        item.menuItemId === customizedItem.id &&
+        item.configurationKey === configurationKey,
     );
 
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
       cart.items.push({
-        id: menuItem.id,
-        name: menuItem.name,
-        price: menuItem.price,
+        cartItemId: crypto.randomUUID(),
+        menuItemId: customizedItem.id,
+        name: customizedItem.name,
+        price: customizedItem.price,
         quantity: 1,
+        selectedSides: customizedItem.selectedSides,
+        note: customizedItem.note,
+        configurationKey,
       });
     }
 
@@ -94,12 +103,12 @@ const RestaurantMenu = () => {
 
     const itemCount = cart.items.reduce(
       (total, item) => total + item.quantity,
-      0
+      0,
     );
 
     setCartItemCount(itemCount);
-
-    setCartMessage(`${menuItem.name} je dodat u korpu.`);
+    setCartMessage(`${customizedItem.name} je dodat u korpu.`);
+    setSelectedMenuItem(null);
   };
 
   return (
@@ -108,18 +117,26 @@ const RestaurantMenu = () => {
         {loading && <p className="menu-message">Učitavanje jelovnika...</p>}
 
         <div className="menu-header">
-        <h2>{restaurant ? restaurant.name : "Jelovnik"}</h2>
+          <button
+            type="button"
+            className="menu-back-button"
+            onClick={() => navigate("/restaurants")}
+          >
+            ← Nazad na restorane
+          </button>
 
-        <button type="button"
-        className="cart-button"
-        onClick={() => navigate("/cart")}>
-          Korpa ({cartItemCount})
-        </button>
+          <h2>{restaurant ? restaurant.name : "Jelovnik"}</h2>
 
+          <button
+            type="button"
+            className="cart-button"
+            onClick={() => navigate("/cart")}
+          >
+            Korpa ({cartItemCount})
+          </button>
         </div>
-        {cartMessage && (
-          <p className="menu-message">{cartMessage}</p>
-        )}
+
+        {cartMessage && <p className="menu-message">{cartMessage}</p>}
 
         {!loading && !error && menuItems.length === 0 && (
           <p className="menu-message">
@@ -134,18 +151,14 @@ const RestaurantMenu = () => {
             <div className="menu-item-card" key={menuItem.id}>
               <h3>{menuItem.name}</h3>
 
-              <p className="menu-item-description">
-                {menuItem.description}
-              </p>
+              <p className="menu-item-description">{menuItem.description}</p>
 
-              <p className="menu-item-price">
-                {menuItem.price} RSD
-              </p>
+              <p className="menu-item-price">{menuItem.price} RSD</p>
 
               <button
                 type="button"
                 className="add-to-cart-button"
-                onClick={() => handleAddToCart(menuItem)}
+                onClick={() => setSelectedMenuItem(menuItem)}
               >
                 Dodaj u korpu
               </button>
@@ -153,6 +166,14 @@ const RestaurantMenu = () => {
           ))}
         </div>
       </div>
+
+      {selectedMenuItem && (
+        <MenuItemCustomizationModal
+          menuItem={selectedMenuItem}
+          onClose={() => setSelectedMenuItem(null)}
+          onAddToCart={handleAddToCart}
+        />
+      )}
     </div>
   );
 };

@@ -1,21 +1,22 @@
 import "./MojeAdrese.scss";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { API_BASE_URL } from "../api";
 
 function MojeAdrese() {
-    const navigate = useNavigate();
-    const [user, setUser] = useState(null);
-    const [addresses, setAddresses] = useState([]);
-    const [loadError, setLoadError] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.returnTo;
+  const [user, setUser] = useState(null);
+  const [addresses, setAddresses] = useState([]);
+  const [loadError, setLoadError] = useState("");
 
-    
-    const [formData, setFormData] = useState({ street: "", city: "" });
-    const [formError, setFormError] = useState("");
+  const [formData, setFormData] = useState({ street: "", city: "" });
+  const [formError, setFormError] = useState("");
 
-    const [editingId, setEditingId] = useState(null);
-    const [editFormData, setEditFormData] = useState({ street: "", city: "" });
-    const [editError, setEditError] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editFormData, setEditFormData] = useState({ street: "", city: "" });
+  const [editError, setEditError] = useState("");
 
   useEffect(() => {
     const stored = localStorage.getItem("gozbaUser");
@@ -79,6 +80,12 @@ function MojeAdrese() {
 
       setFormError("");
       setFormData({ street: "", city: "" });
+
+      if (returnTo) {
+        navigate(returnTo);
+        return;
+      }
+
       loadAddresses(user.id);
     } catch {
       setFormError("Greška prilikom povezivanja sa serverom.");
@@ -133,7 +140,9 @@ function MojeAdrese() {
   };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Da li sigurno želiš da obrišeš ovu adresu?");
+    const confirmed = window.confirm(
+      "Da li sigurno želiš da obrišeš ovu adresu?",
+    );
     if (!confirmed) {
       return;
     }
@@ -157,16 +166,21 @@ function MojeAdrese() {
     return null;
   }
 
-
-   return (
+  return (
     <div className="adrese-container">
       <div className="adrese-content">
         <div className="adrese-header">
-          <button type="button" className="adrese-back-button" onClick={() => navigate("/kupac")}>
+          <button
+            type="button"
+            className="adrese-back-button"
+            onClick={() => navigate(returnTo || "/kupac")}
+          >
             ← Nazad
           </button>
           <h1>Moje adrese</h1>
-          <p className="adrese-subtitle">Upravljaj svojim lokacijama za dostavu</p>
+          <p className="adrese-subtitle">
+            Upravljaj svojim lokacijama za dostavu
+          </p>
         </div>
 
         {loadError && <p className="adrese-error">{loadError}</p>}
@@ -179,7 +193,10 @@ function MojeAdrese() {
           {addresses.map((address) => (
             <div className="adresa-card" key={address.id}>
               {editingId === address.id ? (
-                <form className="adresa-edit-form" onSubmit={(e) => handleEditSubmit(e, address.id)}>
+                <form
+                  className="adresa-edit-form"
+                  onSubmit={(e) => handleEditSubmit(e, address.id)}
+                >
                   <input
                     type="text"
                     name="street"
@@ -195,8 +212,14 @@ function MojeAdrese() {
                     onChange={handleEditChange}
                   />
                   <div className="adresa-actions">
-                    <button type="submit" className="adresa-save-button">Sačuvaj</button>
-                    <button type="button" className="adresa-cancel-button" onClick={cancelEditing}>
+                    <button type="submit" className="adresa-save-button">
+                      Sačuvaj
+                    </button>
+                    <button
+                      type="button"
+                      className="adresa-cancel-button"
+                      onClick={cancelEditing}
+                    >
                       Otkaži
                     </button>
                   </div>
@@ -209,10 +232,18 @@ function MojeAdrese() {
                     <span className="adresa-city">{address.city}</span>
                   </div>
                   <div className="adresa-actions">
-                    <button type="button" className="adresa-edit-button" onClick={() => startEditing(address)}>
+                    <button
+                      type="button"
+                      className="adresa-edit-button"
+                      onClick={() => startEditing(address)}
+                    >
                       Izmeni
                     </button>
-                    <button type="button" className="adresa-delete-button" onClick={() => handleDelete(address.id)}>
+                    <button
+                      type="button"
+                      className="adresa-delete-button"
+                      onClick={() => handleDelete(address.id)}
+                    >
                       Obriši
                     </button>
                   </div>
@@ -239,14 +270,15 @@ function MojeAdrese() {
               value={formData.city}
               onChange={handleAddChange}
             />
-            <button type="submit" className="adresa-add-button">Dodaj adresu</button>
+            <button type="submit" className="adresa-add-button">
+              Dodaj adresu
+            </button>
             {formError && <p className="adrese-error">{formError}</p>}
           </form>
         </div>
       </div>
     </div>
   );
-};
-
+}
 
 export default MojeAdrese;

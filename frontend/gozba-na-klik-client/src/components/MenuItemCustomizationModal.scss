@@ -1,0 +1,179 @@
+.customization-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.customization-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 560px;
+  max-height: calc(100vh - 48px);
+
+  padding: 36px;
+
+  background-color: #ffffff;
+  border-radius: 24px;
+
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.customization-modal h2 {
+  margin: 0;
+  text-align: center;
+
+  font-family: Georgia, serif;
+  font-size: 30px;
+  color: #332923;
+}
+
+.customization-price {
+  margin: 8px 0 28px;
+
+  text-align: center;
+  color: #f26a1b;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.customization-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 2px solid #f26a1b;
+  border-radius: 50%;
+
+  background-color: #f26a1b;
+  color: #ffffff;
+
+  font-size: 25px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.customization-close:hover {
+  background-color: #ffffff;
+  color: #f26a1b;
+}
+
+.customization-section {
+  margin-top: 24px;
+}
+
+.customization-section h3 {
+  margin-bottom: 14px;
+
+  text-align: center;
+  color: #332923;
+}
+
+.sides-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.side-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px;
+
+  border: 1px solid #ead8c8;
+  border-radius: 10px;
+
+  background-color: #fff7ef;
+
+  cursor: pointer;
+}
+
+.side-option input {
+  accent-color: #f26a1b;
+}
+
+.note-label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  text-align: center;
+
+  color: #332923;
+  font-weight: 600;
+}
+
+.note-label textarea {
+  width: 100%;
+  min-height: 90px;
+
+  padding: 12px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #ead8c8;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 15px;
+
+  resize: vertical;
+}
+
+.customization-add-button {
+  width: 100%;
+
+  margin-top: 28px;
+  padding: 14px;
+
+  border: none;
+  border-radius: 12px;
+
+  background-color: #f26a1b;
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.customization-add-button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .customization-overlay {
+    padding: 12px;
+  }
+
+  .customization-modal {
+    max-height: calc(100vh - 24px);
+    padding: 32px 20px 24px;
+  }
+
+  .sides-grid {
+    grid-template-columns: 1fr;
+  }
+}

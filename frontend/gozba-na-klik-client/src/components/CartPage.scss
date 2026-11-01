@@ -187,3 +187,19 @@
   color: #6a5a50;
   font-size: 17px;
 }
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-options,
+.cart-item-note {
+  margin: 6px 0 0;
+  color: #6a5a50;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cart-item-options strong,
+.cart-item-note strong {
+  color: #332923;
+}

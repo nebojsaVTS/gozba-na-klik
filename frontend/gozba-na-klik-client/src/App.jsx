@@ -14,6 +14,7 @@ import CustomerHomePage from "./components/CustomerHomePage";
 import RestaurantOperatorHomePage from "./components/RestaurantOperatorHomePage";
 import RestaurantOrders from "./components/RestaurantOrders";
 import CartPage from "./components/CartPage";
+import CheckoutPage from "./components/CheckoutPage";
 
 function App() {
   return (
@@ -41,24 +42,15 @@ function App() {
         />
 
         <Route path="/restaurants" element={<CustomerRestaurants />} />
-        <Route
-          path="/restaurants/:restaurantId"
-          element={<RestaurantMenu />}
-        />
+        <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
         <Route path="/cart" element={<CartPage />} />
 
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/moje-adrese" element={<MojeAdrese />} />
 
-        <Route
-          path="/admin/restaurants"
-          element={<RestaurantsOverview />}
-        />
+        <Route path="/admin/restaurants" element={<RestaurantsOverview />} />
 
-        <Route
-          path="/admin/restaurants/new"
-          element={<CreateRestaurant />}
-        />
+        <Route path="/admin/restaurants/new" element={<CreateRestaurant />} />
 
         <Route path="/moj-profil" element={<MojProfil />} />
 
@@ -71,6 +63,7 @@ function App() {
           path="/restaurant-operator/orders"
           element={<RestaurantOrders />}
         />
+        <Route path="/checkout" element={<CheckoutPage />} />
       </Routes>
     </BrowserRouter>
   );
