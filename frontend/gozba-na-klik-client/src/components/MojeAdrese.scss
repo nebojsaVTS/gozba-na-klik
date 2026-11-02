@@ -1,186 +1,278 @@
 .adrese-container {
-    min-height: 100vh;
-    background-color: #fce4cb;
-    padding: 40px;
-    display: flex;
-    justify-content: center;
+  min-height: 100vh;
+  background-color: #fce4cb;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
 }
 
 .adrese-content {
-    width: 100%;
-    max-width: 700px;
+  width: 100%;
+  max-width: 700px;
 }
 
 .adrese-header {
-    position: relative;
-    text-align: center;
-    margin-bottom: 32px;
+  position: relative;
+  text-align: center;
+  margin-bottom: 32px;
 }
 
 .adrese-back-button {
-    position: absolute;
-    left: 0;
-    top: 4px;
-    padding: 10px 18px;
-    border:1px solid #f26a1b;
-    border-radius: 10px;
-    background-color: transparent;
-    color: #f26a1b;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s ease;
+  position: absolute;
+  left: 0;
+  top: 4px;
+  padding: 10px 18px;
+  border: 1px solid #f26a1b;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #f26a1b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .adrese-back-button:hover {
-    background-color: #f26a1b;
-    color: #ffffff;
+  background-color: #f26a1b;
+  color: #ffffff;
 }
 
 .adrese-header h1 {
-    margin: 0;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 36px;
-    color: #332923;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 36px;
+  color: #332923;
 }
 
 .adrese-subtitle {
-    margin: 10px 0 0;
-    font-size: 16px;
-    color: #6b5b52;
+  margin: 10px 0 0;
+  font-size: 16px;
+  color: #6b5b52;
 }
 
 .adrese-error {
-    color: #d32f2f;
-    text-align: center;
-    font-weight: 500;
+  color: #d32f2f;
+  text-align: center;
+  font-weight: 500;
 }
 
 .adrese-empty {
-    text-align: center;
-    color: #6b5b52;
-    padding: 24px;
+  text-align: center;
+  color: #6b5b52;
+  padding: 24px;
 }
 
 .adrese-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .adresa-card {
-    background-color: #ffffff;
-    border-radius: 20px;
-    padding: 22px 26px;
-    box-shadow: 0 2px 10px rgba(51, 41, 35, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 22px 26px;
+  box-shadow: 0 2px 10px rgba(51, 41, 35, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .adresa-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .adresa-street {
-    font-size: 18px;
-    font-weight: 600;
-    color: #332923;
+  font-size: 18px;
+  font-weight: 600;
+  color: #332923;
 }
 
 .adresa-city {
-    font-size: 15px;
-    color: #6b5b52;
+  font-size: 15px;
+  color: #6b5b52;
+}
+
+.adresa-phone {
+  margin-top: 3px;
+  font-size: 14px;
+  color: #f26a1b;
+  font-weight: 600;
+}
+
+.adresa-phone.missing {
+  color: #d32f2f;
+  font-weight: 500;
 }
 
 .adresa-actions {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .adresa-edit-button,
 .adresa-cancel-button {
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: 1px solid #e0c7b2;
-    background-color: transparent;
-    color: #332923;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s ease;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #e0c7b2;
+  background-color: transparent;
+  color: #332923;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .adresa-edit-button:hover,
 .adresa-cancel-button:hover {
-    background-color: #f2e4d4;
+  background-color: #f2e4d4;
 }
 
 .adresa-delete-button {
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: 1px solid #d32f2f;
-    background-color: transparent;
-    color: #d32f2f;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s ease;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #d32f2f;
+  background-color: transparent;
+  color: #d32f2f;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .adresa-delete-button:hover {
-    background-color: #d32f2f;
-    color: #ffffff;
+  background-color: #d32f2f;
+  color: #ffffff;
 }
 
 .adresa-save-button,
 .adresa-add-button {
-    padding: 10px 18px;
-    border: none;
-    border-radius: 10px;
-    background-color: #f26a1b;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s ease;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f26a1b;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.adresa-save-button:hover,
+.adresa-add-button:hover {
+  background-color: #d95d16;
+}
+
+.adresa-edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .adresa-edit-form input,
 .adresa-new input {
-    padding: 12px 14px;
-    border: 1px solid #e0c7b2;
-    border-radius: 10px;
-    font-size: 15px;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid #e0c7b2;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .adresa-edit-form input:focus,
 .adresa-new input:focus {
-    border-color: #f26a1b;
+  border-color: #f26a1b;
+}
+
+.phone-input-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+
+  background-color: #f2e4d4;
+  border: 1px solid #e0c7b2;
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+
+  color: #332923;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.adresa-edit-form .phone-input-wrapper input,
+.adresa-new .phone-input-wrapper input {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  border-radius: 0 10px 10px 0;
+}
+
+.phone-input-wrapper:focus-within .phone-prefix {
+  border-color: #f26a1b;
+}
+
+.phone-input-wrapper:focus-within input {
+  border-color: #f26a1b;
 }
 
 .adresa-new {
-    flex-direction: column;
-    align-items: stretch;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .adresa-new h2 {
-    margin: 0 0 16px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 22px;
-    color: #332923;
+  margin: 0 0 16px;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 22px;
+  color: #332923;
 }
 
 .adresa-new form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .adrese-container {
+    padding: 24px 16px;
+  }
+
+  .adrese-header {
+    padding-top: 52px;
+  }
+
+  .adrese-back-button {
+    top: 0;
+  }
+
+  .adresa-card {
+    padding: 20px;
+  }
+
+  .adresa-actions {
+    width: 100%;
+  }
+
+  .adresa-edit-button,
+  .adresa-delete-button,
+  .adresa-save-button,
+  .adresa-cancel-button {
+    flex: 1;
+  }
 }

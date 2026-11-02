@@ -34,6 +34,10 @@ namespace GozbaNaKlik.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Street")
                         .IsRequired()
                         .HasColumnType("text");
@@ -92,6 +96,10 @@ namespace GozbaNaKlik.API.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DeliveryCity")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeliveryPhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
 

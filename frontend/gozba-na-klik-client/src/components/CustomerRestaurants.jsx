@@ -9,6 +9,12 @@ const CustomerRestaurants = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const storedCart = localStorage.getItem("gozbaCart");
+  const cart = storedCart ? JSON.parse(storedCart) : null;
+
+  const cartItemCount =
+    cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+
   useEffect(() => {
     const loadRestaurants = async () => {
       try {
@@ -38,7 +44,17 @@ const CustomerRestaurants = () => {
 
           <h2>Restorani</h2>
 
-          <div className="restaurants-header-placeholder" />
+          {cartItemCount > 0 ? (
+            <button
+              type="button"
+              className="restaurants-cart-button"
+              onClick={() => navigate("/cart")}
+            >
+              Korpa ({cartItemCount})
+            </button>
+          ) : (
+            <div className="restaurants-header-placeholder" />
+          )}
         </div>
 
         {loading && (

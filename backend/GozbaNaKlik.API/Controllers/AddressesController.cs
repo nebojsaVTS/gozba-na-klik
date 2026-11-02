@@ -29,6 +29,7 @@ public class AddressesController : ControllerBase
             Id = a.Id,
             Street = a.Street,
             City = a.City,
+            PhoneNumber = a.PhoneNumber,
             UserId = a.UserId
         });
 
@@ -50,6 +51,7 @@ public class AddressesController : ControllerBase
             Id = address.Id,
             Street = address.Street,
             City = address.City,
+            PhoneNumber = address.PhoneNumber,
             UserId = address.UserId
         });
     }
@@ -71,8 +73,9 @@ public class AddressesController : ControllerBase
 
         var address = new Address
         {
-            Street = dto.Street,
-            City = dto.City,
+            Street = dto.Street.Trim(),
+            City = dto.City.Trim(),
+            PhoneNumber = dto.PhoneNumber.Trim(),
             UserId = dto.UserId
         };
 
@@ -84,10 +87,15 @@ public class AddressesController : ControllerBase
             Id = address.Id,
             Street = address.Street,
             City = address.City,
+            PhoneNumber = address.PhoneNumber,
             UserId = address.UserId
         };
 
-        return CreatedAtAction(nameof(GetById), new { id = address.Id }, response);
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = address.Id },
+            response
+        );
     }
 
     [HttpPut("{id}")]
@@ -105,8 +113,9 @@ public class AddressesController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        address.Street = dto.Street;
-        address.City = dto.City;
+        address.Street = dto.Street.Trim();
+        address.City = dto.City.Trim();
+        address.PhoneNumber = dto.PhoneNumber.Trim();
 
         await _context.SaveChangesAsync();
 
@@ -115,6 +124,7 @@ public class AddressesController : ControllerBase
             Id = address.Id,
             Street = address.Street,
             City = address.City,
+            PhoneNumber = address.PhoneNumber,
             UserId = address.UserId
         });
     }

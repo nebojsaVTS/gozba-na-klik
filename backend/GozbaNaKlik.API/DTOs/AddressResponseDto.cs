@@ -8,6 +8,8 @@ namespace GozbaNaKlik.API.DTOs
 
         public string City { get; set; } = string.Empty;
 
+        public string PhoneNumber { get; set; } = string.Empty;
+
         public int UserId { get; set; }
     }
 }
