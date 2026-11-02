@@ -13,6 +13,7 @@
         // Snapshot adrese u trenutku poručivanja
         public string DeliveryStreet { get; set; } = string.Empty;
         public string DeliveryCity { get; set; } = string.Empty;
+        public string DeliveryPhoneNumber { get; set; } = string.Empty;
 
         public string Status { get; set; } = OrderStatus.Pending;
 

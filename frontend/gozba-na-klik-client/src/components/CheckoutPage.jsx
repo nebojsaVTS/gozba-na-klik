@@ -187,6 +187,7 @@ const CheckoutPage = () => {
                   <div>
                     <strong>{address.street}</strong>
                     <p>{address.city}</p>
+                    <p>{address.phoneNumber}</p>
                   </div>
                 </label>
               ))}

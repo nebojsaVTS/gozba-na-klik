@@ -73,6 +73,7 @@ public class OrdersController : ControllerBase
             RestaurantId = request.RestaurantId,
             DeliveryStreet = address.Street,
             DeliveryCity = address.City,
+            DeliveryPhoneNumber = address.PhoneNumber,
             Status = OrderStatus.Pending,
             CreatedAt = DateTime.UtcNow
         };
