@@ -123,3 +123,20 @@
     display: none;
   }
 }
+.restaurants-cart-button {
+  justify-self: end;
+  padding: 10px 16px;
+  border: 1px solid #f26a1b;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #f26a1b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.restaurants-cart-button:hover {
+  background-color: #f26a1b;
+  color: #ffffff;
+}
