@@ -81,10 +81,13 @@ const CustomerHomePage = () => {
             <p>Upravljaj adresama za dostavu</p>
           </button>
 
-          <button className="customer-option-card" type="button" disabled>
+          <button
+            className="customer-option-card"
+            type="button"
+            onClick={() => navigate("/moje-porudzbine")}
+          >
             <h2>Moje porudžbine</h2>
             <p>Pogledaj svoje porudžbine</p>
-            <span>Uskoro</span>
           </button>
         </div>
       </div>
