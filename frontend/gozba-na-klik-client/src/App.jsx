@@ -15,6 +15,7 @@ import RestaurantOperatorHomePage from "./components/RestaurantOperatorHomePage"
 import RestaurantOrders from "./components/RestaurantOrders";
 import CartPage from "./components/CartPage";
 import CheckoutPage from "./components/CheckoutPage";
+import CustomerOrders from "./components/CustomerOrders";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/restaurants" element={<CustomerRestaurants />} />
         <Route path="/restaurants/:restaurantId" element={<RestaurantMenu />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/moje-porudzbine" element={<CustomerOrders />} />
 
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/moje-adrese" element={<MojeAdrese />} />

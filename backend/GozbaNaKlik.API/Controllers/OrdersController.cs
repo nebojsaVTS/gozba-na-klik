@@ -137,4 +137,75 @@ public class OrdersController : ControllerBase
             order.CreatedAt
         });
     }
+
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetOrdersByUser(int userId)
+    {
+        if (userId <= 0)
+        {
+            return BadRequest("Korisnik nije validan.");
+        }
+
+        var userExists = await _context.Users
+            .AnyAsync(u => u.Id == userId);
+
+        if (!userExists)
+        {
+            return NotFound("Korisnik nije pronađen.");
+        }
+
+        var ordersFromDatabase = await _context.Orders
+            .Where(o => o.UserId == userId)
+            .OrderByDescending(o => o.CreatedAt)
+            .Select(o => new
+            {
+                o.Id,
+                o.RestaurantId,
+                RestaurantName = o.Restaurant.Name,
+                o.DeliveryStreet,
+                o.DeliveryCity,
+                o.DeliveryPhoneNumber,
+                o.Status,
+                o.TotalPrice,
+                o.CreatedAt,
+                Items = o.Items.Select(i => new
+                {
+                    i.Id,
+                    i.MenuItemId,
+                    i.ItemName,
+                    i.UnitPrice,
+                    i.Quantity,
+                    i.SelectedSides,
+                    i.Note
+                }).ToList()
+            })
+            .ToListAsync();
+
+        var orders = ordersFromDatabase.Select(o => new
+        {
+            o.Id,
+            o.RestaurantId,
+            o.RestaurantName,
+            o.DeliveryStreet,
+            o.DeliveryCity,
+            o.DeliveryPhoneNumber,
+            o.Status,
+            o.TotalPrice,
+            o.CreatedAt,
+            Items = o.Items.Select(i => new
+            {
+                i.Id,
+                i.MenuItemId,
+                i.ItemName,
+                i.UnitPrice,
+                i.Quantity,
+                SelectedSides =
+                    JsonSerializer.Deserialize<List<string>>(i.SelectedSides)
+                    ?? new List<string>(),
+                i.Note
+            })
+        });
+
+        return Ok(orders);
+    }
 }
