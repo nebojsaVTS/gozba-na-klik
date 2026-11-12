@@ -11,8 +11,13 @@ const CheckoutPage = () => {
 
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState(null);
+  const [restaurant, setRestaurant] = useState(null);
+
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
+
+  const [fulfillmentType, setFulfillmentType] = useState("");
+  const [pickupPhoneNumber, setPickupPhoneNumber] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -47,18 +52,39 @@ const CheckoutPage = () => {
       setCart(parsedCart);
 
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/addresses?userId=${parsedUser.id}`,
-        );
+        const [restaurantResponse, addressesResponse] = await Promise.all([
+          axios.get(`${API_BASE_URL}/restaurants/${parsedCart.restaurantId}`),
+          axios.get(`${API_BASE_URL}/addresses?userId=${parsedUser.id}`),
+        ]);
 
-        setAddresses(response.data);
+        const restaurantData = restaurantResponse.data;
+        const addressesData = addressesResponse.data;
 
-        if (response.data.length > 0) {
-          setSelectedAddressId(response.data[0].id);
+        setRestaurant(restaurantData);
+        setAddresses(addressesData);
+
+        if (addressesData.length > 0) {
+          setSelectedAddressId(addressesData[0].id);
+
+          if (addressesData[0].phoneNumber) {
+            let phoneNumber = addressesData[0].phoneNumber;
+
+            if (phoneNumber.startsWith("+381")) {
+              phoneNumber = phoneNumber.slice(4);
+            }
+
+            setPickupPhoneNumber(phoneNumber.replace(/\D/g, "").slice(0, 9));
+          }
+        }
+
+        if (restaurantData.supportsDelivery) {
+          setFulfillmentType("Delivery");
+        } else if (restaurantData.supportsPickup) {
+          setFulfillmentType("Pickup");
         }
       } catch (err) {
         console.error(err);
-        setError("Greška prilikom učitavanja adresa.");
+        setError("Greška prilikom učitavanja podataka za porudžbinu.");
       } finally {
         setLoading(false);
       }
@@ -67,10 +93,32 @@ const CheckoutPage = () => {
     loadCheckoutData();
   }, [navigate]);
 
+  const handleFulfillmentChange = (type) => {
+    setFulfillmentType(type);
+    setOrderError("");
+  };
+
   const handleConfirmOrder = async () => {
-    if (!user || !cart || !selectedAddressId) {
+    if (!user || !cart || !restaurant || !fulfillmentType) {
       setOrderError("Nedostaju podaci za kreiranje porudžbine.");
       return;
+    }
+
+    if (fulfillmentType === "Delivery" && !selectedAddressId) {
+      setOrderError("Izaberite adresu za dostavu.");
+      return;
+    }
+
+    if (fulfillmentType === "Pickup") {
+      if (!pickupPhoneNumber) {
+        setOrderError("Broj telefona je obavezan za lično preuzimanje.");
+        return;
+      }
+
+      if (pickupPhoneNumber.length !== 8 && pickupPhoneNumber.length !== 9) {
+        setOrderError("Broj telefona mora sadržati 8 ili 9 cifara nakon +381.");
+        return;
+      }
     }
 
     try {
@@ -80,7 +128,10 @@ const CheckoutPage = () => {
       const orderData = {
         userId: user.id,
         restaurantId: cart.restaurantId,
-        addressId: selectedAddressId,
+        fulfillmentType,
+        addressId: fulfillmentType === "Delivery" ? selectedAddressId : null,
+        phoneNumber:
+          fulfillmentType === "Pickup" ? `+381${pickupPhoneNumber}` : "",
         items: cart.items.map((item) => ({
           menuItemId: item.menuItemId,
           quantity: item.quantity,
@@ -99,11 +150,19 @@ const CheckoutPage = () => {
     } catch (err) {
       console.error(err);
 
-      setOrderError(
-        typeof err.response?.data === "string"
-          ? err.response.data
-          : "Došlo je do greške prilikom slanja porudžbine.",
-      );
+      const responseData = err.response?.data;
+
+      if (typeof responseData === "string") {
+        setOrderError(responseData);
+      } else if (responseData?.errors) {
+        const validationMessages = Object.values(responseData.errors).flat();
+
+        setOrderError(
+          validationMessages[0] || "Podaci porudžbine nisu ispravni.",
+        );
+      } else {
+        setOrderError("Došlo je do greške prilikom slanja porudžbine.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -115,6 +174,18 @@ const CheckoutPage = () => {
       0,
     ) || 0;
 
+  const canSubmitOrder = () => {
+    if (isSubmitting || !fulfillmentType) {
+      return false;
+    }
+
+    if (fulfillmentType === "Delivery" && !selectedAddressId) {
+      return false;
+    }
+
+    return true;
+  };
+
   if (loading) {
     return (
       <div className="checkout-container">
@@ -125,7 +196,7 @@ const CheckoutPage = () => {
     );
   }
 
-  if (!cart) {
+  if (!cart || !restaurant) {
     return null;
   }
 
@@ -149,51 +220,136 @@ const CheckoutPage = () => {
         {error && <p className="checkout-message error">{error}</p>}
 
         <section className="checkout-section">
-          <h3>Adresa za dostavu</h3>
+          <h3>Način preuzimanja</h3>
 
-          {addresses.length === 0 ? (
-            <div className="checkout-no-address">
-              <p>Nemate sačuvanu adresu za dostavu.</p>
+          <div className="checkout-fulfillment-options">
+            {restaurant.supportsDelivery && (
+              <label className="checkout-fulfillment-option">
+                <input
+                  type="radio"
+                  name="fulfillmentType"
+                  value="Delivery"
+                  checked={fulfillmentType === "Delivery"}
+                  onChange={() => handleFulfillmentChange("Delivery")}
+                />
+                <span>Dostava</span>
+              </label>
+            )}
 
-              <button
-                type="button"
-                className="add-address-button"
-                onClick={() =>
-                  navigate("/moje-adrese", {
-                    state: { returnTo: "/checkout" },
-                  })
-                }
-              >
-                Dodaj adresu
-              </button>
-            </div>
-          ) : (
-            <div className="checkout-addresses">
-              {addresses.map((address) => (
-                <label
-                  key={address.id}
-                  className={`checkout-address-card ${
-                    selectedAddressId === address.id ? "selected" : ""
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="deliveryAddress"
-                    value={address.id}
-                    checked={selectedAddressId === address.id}
-                    onChange={() => setSelectedAddressId(address.id)}
-                  />
-
-                  <div>
-                    <strong>{address.street}</strong>
-                    <p>{address.city}</p>
-                    <p>{address.phoneNumber}</p>
-                  </div>
-                </label>
-              ))}
-            </div>
-          )}
+            {restaurant.supportsPickup && (
+              <label className="checkout-fulfillment-option">
+                <input
+                  type="radio"
+                  name="fulfillmentType"
+                  value="Pickup"
+                  checked={fulfillmentType === "Pickup"}
+                  onChange={() => handleFulfillmentChange("Pickup")}
+                />
+                <span>Lično preuzimanje</span>
+              </label>
+            )}
+          </div>
         </section>
+
+        {fulfillmentType === "Delivery" && (
+          <section className="checkout-section">
+            <h3>Adresa za dostavu</h3>
+
+            {addresses.length === 0 ? (
+              <div className="checkout-no-address">
+                <p>Nemate sačuvanu adresu za dostavu.</p>
+
+                <button
+                  type="button"
+                  className="add-address-button"
+                  onClick={() =>
+                    navigate("/moje-adrese", {
+                      state: { returnTo: "/checkout" },
+                    })
+                  }
+                >
+                  Dodaj adresu
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="checkout-addresses">
+                  {addresses.map((address) => (
+                    <label
+                      key={address.id}
+                      className={`checkout-address-card ${
+                        selectedAddressId === address.id ? "selected" : ""
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryAddress"
+                        value={address.id}
+                        checked={selectedAddressId === address.id}
+                        onChange={() => setSelectedAddressId(address.id)}
+                      />
+
+                      <div>
+                        <strong>{address.street}</strong>
+                        <p>{address.city}</p>
+                        <p>{address.phoneNumber}</p>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  className="add-address-button"
+                  onClick={() =>
+                    navigate("/moje-adrese", {
+                      state: { returnTo: "/checkout" },
+                    })
+                  }
+                >
+                  + Dodaj novu adresu
+                </button>
+              </>
+            )}
+          </section>
+        )}
+
+        {fulfillmentType === "Pickup" && (
+          <section className="checkout-section">
+            <h3>Lično preuzimanje</h3>
+
+            <div className="checkout-pickup-card">
+              <div className="checkout-pickup-info">
+                <strong>{restaurant.name}</strong>
+                <p>{restaurant.address}</p>
+              </div>
+
+              <div className="checkout-pickup-phone">
+                <label>Broj telefona</label>
+
+                <div className="phone-input-wrapper">
+                  <span className="phone-prefix">+381</span>
+
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={9}
+                    value={pickupPhoneNumber}
+                    onChange={(e) => {
+                      const value = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 9);
+
+                      setPickupPhoneNumber(value);
+                      setOrderError("");
+                    }}
+                    placeholder="615648484"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="checkout-section">
           <h3>Pregled porudžbine</h3>
@@ -239,7 +395,7 @@ const CheckoutPage = () => {
           type="button"
           className="confirm-order-button"
           onClick={handleConfirmOrder}
-          disabled={!selectedAddressId || isSubmitting}
+          disabled={!canSubmitOrder()}
         >
           {isSubmitting ? "Slanje porudžbine..." : "Potvrdi porudžbinu"}
         </button>

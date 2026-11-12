@@ -15,7 +15,9 @@ public class RestaurantsController : ControllerBase
     private readonly AppDbContext _context;
     private readonly IRestaurantRepository _restaurantRepository;
 
-    public RestaurantsController(AppDbContext context, IRestaurantRepository restaurantRepository)
+    public RestaurantsController(
+        AppDbContext context,
+        IRestaurantRepository restaurantRepository)
     {
         _context = context;
         _restaurantRepository = restaurantRepository;
@@ -48,7 +50,6 @@ public class RestaurantsController : ControllerBase
     }
 
     [HttpGet("all")]
-
     public async Task<IActionResult> GetAll()
     {
         var restaurants = await _restaurantRepository.GetAllAsync();
@@ -59,8 +60,12 @@ public class RestaurantsController : ControllerBase
             Name = r.Name,
             Address = r.Address,
             PhoneNumber = r.PhoneNumber,
+            SupportsDelivery = r.SupportsDelivery,
+            SupportsPickup = r.SupportsPickup,
             OwnerId = r.OwnerId,
-            OwnerUsername = r.Owner != null? r.Owner.Username : string.Empty
+            OwnerUsername = r.Owner != null
+                ? r.Owner.Username
+                : string.Empty
         });
 
         return Ok(result);
@@ -84,6 +89,8 @@ public class RestaurantsController : ControllerBase
             Name = restaurant.Name,
             Address = restaurant.Address,
             PhoneNumber = restaurant.PhoneNumber,
+            SupportsDelivery = restaurant.SupportsDelivery,
+            SupportsPickup = restaurant.SupportsPickup,
             OwnerId = restaurant.OwnerId,
             OwnerUsername = owner?.Username ?? string.Empty
         };
@@ -100,6 +107,13 @@ public class RestaurantsController : ControllerBase
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
+        }
+
+        if (!dto.SupportsDelivery && !dto.SupportsPickup)
+        {
+            return BadRequest(
+                "Restoran mora podržavati dostavu, lično preuzimanje ili obe opcije."
+            );
         }
 
         var owner = _context.Users.FirstOrDefault(u => u.Id == dto.OwnerId);
@@ -119,6 +133,8 @@ public class RestaurantsController : ControllerBase
             Name = dto.Name,
             Address = dto.Address,
             PhoneNumber = dto.PhoneNumber,
+            SupportsDelivery = dto.SupportsDelivery,
+            SupportsPickup = dto.SupportsPickup,
             OwnerId = dto.OwnerId
         };
 
@@ -131,19 +147,27 @@ public class RestaurantsController : ControllerBase
             Name = restaurant.Name,
             Address = restaurant.Address,
             PhoneNumber = restaurant.PhoneNumber,
+            SupportsDelivery = restaurant.SupportsDelivery,
+            SupportsPickup = restaurant.SupportsPickup,
             OwnerId = restaurant.OwnerId,
             OwnerUsername = owner.Username
         };
 
-        return CreatedAtAction(nameof(GetById), new { id = restaurant.Id }, response);
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = restaurant.Id },
+            response
+        );
     }
 
     // TODO: Obezbediti pristup samo administratorima
     // kada bude implementirana autentikacija i autorizacija (JWT).
+
     [HttpPut("{id}")]
     public IActionResult UpdateRestaurant(int id, UpdateRestaurantDto dto)
     {
-        var restaurant = _context.Restaurants.FirstOrDefault(r => r.Id == id);
+        var restaurant = _context.Restaurants
+            .FirstOrDefault(r => r.Id == id);
 
         if (restaurant == null)
         {
@@ -155,20 +179,42 @@ public class RestaurantsController : ControllerBase
             return BadRequest(ModelState);
         }
 
+        if (!dto.SupportsDelivery && !dto.SupportsPickup)
+        {
+            return BadRequest(
+                "Restoran mora podržavati dostavu, lično preuzimanje ili obe opcije."
+            );
+        }
+
         restaurant.Name = dto.Name;
         restaurant.Address = dto.Address;
         restaurant.PhoneNumber = dto.PhoneNumber;
+        restaurant.SupportsDelivery = dto.SupportsDelivery;
+        restaurant.SupportsPickup = dto.SupportsPickup;
 
         _context.SaveChanges();
 
-        return Ok(restaurant);
+        return Ok(new RestaurantResponseDto
+        {
+            Id = restaurant.Id,
+            Name = restaurant.Name,
+            Address = restaurant.Address,
+            PhoneNumber = restaurant.PhoneNumber,
+            SupportsDelivery = restaurant.SupportsDelivery,
+            SupportsPickup = restaurant.SupportsPickup,
+            OwnerId = restaurant.OwnerId,
+            OwnerUsername = restaurant.Owner?.Username ?? string.Empty
+        });
     }
+
     // TODO: Obezbediti pristup samo administratorima
     // kada bude implementirana autentikacija i autorizacija (JWT).
+
     [HttpDelete("{id}")]
     public IActionResult DeleteRestaurant(int id)
     {
-        var restaurant = _context.Restaurants.FirstOrDefault(r => r.Id == id);
+        var restaurant = _context.Restaurants
+            .FirstOrDefault(r => r.Id == id);
 
         if (restaurant == null)
         {

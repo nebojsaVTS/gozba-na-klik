@@ -20,17 +20,29 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.checkout-content h1 {
-  margin: 0 0 32px;
+.checkout-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+}
+
+.checkout-header h2 {
+  margin: 0;
 
   text-align: center;
 
-  font-family: Georgia, serif;
-  font-size: 34px;
+  font-size: 32px;
   color: #332923;
 }
 
+.checkout-header-placeholder {
+  width: 100%;
+}
+
 .checkout-back-button {
+  justify-self: start;
+
   padding: 10px 16px;
 
   border: 1px solid #f26a1b;
@@ -51,11 +63,34 @@
   margin-top: 30px;
 }
 
-.checkout-section h2 {
-  margin-bottom: 16px;
+.checkout-section h3 {
+  margin: 0 0 16px;
 
-  font-family: Georgia, serif;
   color: #332923;
+}
+
+.checkout-fulfillment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkout-fulfillment-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: fit-content;
+
+  cursor: pointer;
+
+  font-weight: 600;
+  color: #332923;
+}
+
+.checkout-fulfillment-option input {
+  accent-color: #f26a1b;
+  cursor: pointer;
 }
 
 .checkout-addresses {
@@ -93,7 +128,9 @@
   gap: 4px;
 }
 
-.checkout-address-card span {
+.checkout-address-card p {
+  margin: 0;
+
   color: #6a5a50;
 }
 
@@ -106,20 +143,108 @@
   border-radius: 14px;
 }
 
-.checkout-no-address button {
-  margin-top: 10px;
+.add-address-button {
+  margin-top: 14px;
   padding: 10px 18px;
 
-  border: none;
+  border: 1px solid #f26a1b;
   border-radius: 10px;
 
-  background-color: #f26a1b;
-  color: #ffffff;
+  background-color: transparent;
+  color: #f26a1b;
+
+  font-weight: 600;
 
   cursor: pointer;
 }
 
-.checkout-restaurant {
+.add-address-button:hover {
+  background-color: #f26a1b;
+  color: #ffffff;
+}
+
+.checkout-pickup-card {
+  padding: 18px;
+
+  border: 2px solid #f26a1b;
+  border-radius: 14px;
+
+  background-color: #fff7ef;
+}
+
+.checkout-pickup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin-bottom: 18px;
+}
+
+.checkout-pickup-info strong {
+  color: #332923;
+}
+
+.checkout-pickup-info p {
+  margin: 0;
+
+  color: #6a5a50;
+}
+
+.checkout-pickup-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkout-pickup-phone label {
+  font-weight: 600;
+  color: #332923;
+}
+
+.phone-input-wrapper {
+  display: flex;
+  align-items: stretch;
+
+  width: 100%;
+  max-width: 320px;
+}
+
+.phone-prefix {
+  display: flex;
+  align-items: center;
+
+  padding: 10px 12px;
+
+  border: 1px solid #d9c8bb;
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+
+  background-color: #f4e8dc;
+
+  color: #332923;
+  font-weight: 600;
+}
+
+.phone-input-wrapper input {
+  flex: 1;
+
+  min-width: 0;
+  padding: 10px 12px;
+
+  border: 1px solid #d9c8bb;
+  border-radius: 0 10px 10px 0;
+
+  font-size: 15px;
+  outline: none;
+}
+
+.phone-input-wrapper input:focus {
+  border-color: #f26a1b;
+}
+
+.checkout-restaurant-name {
+  margin-bottom: 12px;
+
   color: #f26a1b;
   font-weight: 700;
   font-size: 18px;
@@ -142,11 +267,22 @@
   border-radius: 12px;
 }
 
+.checkout-item h4 {
+  margin: 0;
+}
+
 .checkout-item p {
   margin: 5px 0 0;
 
   color: #6a5a50;
   font-size: 14px;
+}
+
+.checkout-item-price {
+  flex-shrink: 0;
+
+  font-weight: 600;
+  color: #332923;
 }
 
 .checkout-total {
@@ -185,6 +321,53 @@
   cursor: not-allowed;
 }
 
+.checkout-message {
+  margin-top: 18px;
+
+  text-align: center;
+}
+
+.checkout-message.error,
 .checkout-error {
   color: #c62828;
+}
+
+@media (max-width: 700px) {
+  .checkout-container {
+    padding: 20px 12px;
+  }
+
+  .checkout-content {
+    padding: 22px;
+  }
+
+  .checkout-header {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-header h2 {
+    order: 1;
+
+    font-size: 28px;
+  }
+
+  .checkout-back-button {
+    order: 0;
+  }
+
+  .checkout-header-placeholder {
+    display: none;
+  }
+
+  .checkout-item {
+    flex-direction: column;
+  }
+
+  .checkout-total {
+    text-align: left;
+  }
+
+  .phone-input-wrapper {
+    max-width: 100%;
+  }
 }

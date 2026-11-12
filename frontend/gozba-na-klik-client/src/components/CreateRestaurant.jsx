@@ -3,127 +3,174 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../api";
 
 function CreateRestaurant() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [owners, setOwners] = useState([]);
-    const [formData, setFormData] = useState({
-        name: "",
-        address: "",
-        phoneNumber: "",
-        ownerId: "",
+  const [owners, setOwners] = useState([]);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    phoneNumber: "",
+    ownerId: "",
+    supportsDelivery: false,
+    supportsPickup: false,
+  });
+
+  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/admin/users`)
+      .then((response) => response.json())
+      .then((data) => {
+        const restaurantOwners = data.filter(
+          (u) => u.role === "Vlasnik restorana",
+        );
+
+        setOwners(restaurantOwners);
+      })
+      .catch(() => {
+        setMessage("Greška pri učitavanju vlasnika!");
+        setIsError(true);
+      });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
     });
+  };
 
-    const [message, setMessage] = useState("");
-    const [isError, setIsError] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    if (
+      !formData.name.trim() ||
+      !formData.address.trim() ||
+      !formData.phoneNumber.trim() ||
+      !formData.ownerId
+    ) {
+      setMessage("Sva polja su obavezna.");
+      setIsError(true);
+      return;
+    }
 
-    useEffect(() => {
-        fetch(`${API_BASE_URL}/admin/users`)
-        .then((response) => response.json())
-        .then((data) => {
-            const restaurantOwners = data.filter((u) => u.role === "Vlasnik restorana");
-            setOwners(restaurantOwners);
-        })
-        .catch(() => setMessage("Greska pri ucitavanju vlasnika!"));
-    }, []);
+    if (!formData.supportsDelivery && !formData.supportsPickup) {
+      setMessage(
+        "Restoran mora podržavati dostavu, lično preuzimanje ili obe opcije.",
+      );
+      setIsError(true);
+      return;
+    }
 
+    try {
+      const response = await fetch(`${API_BASE_URL}/restaurants`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          address: formData.address,
+          phoneNumber: formData.phoneNumber,
+          ownerId: Number(formData.ownerId),
+          supportsDelivery: formData.supportsDelivery,
+          supportsPickup: formData.supportsPickup,
+        }),
+      });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({...formData, [name]: value });
-    };
+      if (!response.ok) {
+        const errorText = await response.text();
 
+        setMessage(errorText || "Kreiranje restorana nije uspelo!");
+        setIsError(true);
+        return;
+      }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+      setMessage("Restoran je uspešno kreiran!");
+      setIsError(false);
 
-        if (
-            !formData.name.trim() ||
-            !formData.address.trim() ||
-            !formData.phoneNumber.trim()  ||
-            !formData.ownerId
-        )
-        {
-            setMessage("Sva polja su obavezna.");
-            setIsError(true);
-            return;
+      setTimeout(() => {
+        navigate("/admin/restaurants");
+      }, 1500);
+    } catch {
+      setMessage("Greška prilikom povezivanja sa serverom.");
+      setIsError(true);
+    }
+  };
 
-        }
+  return (
+    <div>
+      <h2>Kreiranje restorana</h2>
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/restaurants`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name: formData.name,
-                    address: formData.address,
-                    phoneNumber: formData.phoneNumber,
-                    ownerId: Number(formData.ownerId),
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Naziv restorana"
+          value={formData.name}
+          onChange={handleChange}
+        />
 
-                }),
-            });
+        <input
+          type="text"
+          name="address"
+          placeholder="Adresa"
+          value={formData.address}
+          onChange={handleChange}
+        />
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                setMessage(errorText || "Kreiranje restorana nije uspelo!");
-                setIsError(true);
-                return;
-            }
+        <input
+          type="text"
+          name="phoneNumber"
+          placeholder="Telefon"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+        />
 
-            setMessage("Restoran je uspesno kreiran!");
-            setIsError(false);
+        <select name="ownerId" value={formData.ownerId} onChange={handleChange}>
+          <option value="">Izaberi vlasnika</option>
 
-            setTimeout(() => {
-                navigate("/admin/restaurants");
-            }, 1500);
-        } catch {
-            setMessage("Greska prilikom povezivanja sa serverom.");
-            setIsError(true);
-        }
-    };
+          {owners.map((owner) => (
+            <option key={owner.id} value={owner.id}>
+              {owner.username}
+            </option>
+          ))}
+        </select>
 
-    return (
         <div>
-            <h2>Kreiranje restorana</h2>
+          <p>Način preuzimanja:</p>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Naziv restorana"
-                    value={formData.name}
-                    onChange={handleChange}
-                />
-                <input
-                    type="text"
-                    name="address"
-                    placeholder="Adresa"
-                    value={formData.address}
-                    onChange={handleChange}
-                />
-                <input
-                    type="text"
-                    name="phoneNumber"
-                    placeholder="Telefon"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                />
+          <label>
+            <input
+              type="checkbox"
+              name="supportsDelivery"
+              checked={formData.supportsDelivery}
+              onChange={handleChange}
+            />
+            Dostava
+          </label>
 
-                <select name="ownerId" value={formData.ownerId} onChange={handleChange}>
-                    <option value="">Izaberi vlasnika</option>
-                    {owners.map((owner) => (
-                        <option key={owner.id} value={owner.id}>
-                            {owner.username}
-                        </option>
-                    ))}
-                </select>
-
-                <button type="submit">Kreiraj restoran</button>
-            </form>
-
-            {message && <p className={isError ? "error" : ""}>{message}</p>}
+          <label>
+            <input
+              type="checkbox"
+              name="supportsPickup"
+              checked={formData.supportsPickup}
+              onChange={handleChange}
+            />
+            Lično preuzimanje
+          </label>
         </div>
-    );
+
+        <button type="submit">Kreiraj restoran</button>
+      </form>
+
+      {message && <p className={isError ? "error" : ""}>{message}</p>}
+    </div>
+  );
 }
 
 export default CreateRestaurant;

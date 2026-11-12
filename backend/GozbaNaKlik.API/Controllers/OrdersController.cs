@@ -31,14 +31,16 @@ public class OrdersController : ControllerBase
             return BadRequest("Restoran nije validan.");
         }
 
-        if (request.AddressId <= 0)
-        {
-            return BadRequest("Adresa nije validna.");
-        }
-
         if (request.Items == null || request.Items.Count == 0)
         {
             return BadRequest("Porudžbina mora imati najmanje jednu stavku.");
+        }
+
+        if (!OrderFulfillmentType.All.Contains(request.FulfillmentType))
+        {
+            return BadRequest(
+                "Način preuzimanja mora biti Delivery ili Pickup."
+            );
         }
 
         var user = await _context.Users
@@ -57,26 +59,72 @@ public class OrdersController : ControllerBase
             return NotFound("Restoran nije pronađen.");
         }
 
-        var address = await _context.Addresses
-            .FirstOrDefaultAsync(a =>
-                a.Id == request.AddressId &&
-                a.UserId == request.UserId);
-
-        if (address == null)
+        if (
+            request.FulfillmentType == OrderFulfillmentType.Delivery &&
+            !restaurant.SupportsDelivery
+        )
         {
-            return BadRequest("Izabrana adresa ne pripada korisniku.");
+            return BadRequest("Izabrani restoran ne podržava dostavu.");
+        }
+
+        if (
+            request.FulfillmentType == OrderFulfillmentType.Pickup &&
+            !restaurant.SupportsPickup
+        )
+        {
+            return BadRequest(
+                "Izabrani restoran ne podržava lično preuzimanje."
+            );
         }
 
         var order = new Order
         {
             UserId = request.UserId,
             RestaurantId = request.RestaurantId,
-            DeliveryStreet = address.Street,
-            DeliveryCity = address.City,
-            DeliveryPhoneNumber = address.PhoneNumber,
+            FulfillmentType = request.FulfillmentType,
             Status = OrderStatus.Pending,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            EstimatedReadyAt = null
         };
+
+        if (request.FulfillmentType == OrderFulfillmentType.Delivery)
+        {
+            if (!request.AddressId.HasValue || request.AddressId.Value <= 0)
+            {
+                return BadRequest(
+                    "Adresa je obavezna za dostavu."
+                );
+            }
+
+            var address = await _context.Addresses
+                .FirstOrDefaultAsync(a =>
+                    a.Id == request.AddressId.Value &&
+                    a.UserId == request.UserId);
+
+            if (address == null)
+            {
+                return BadRequest(
+                    "Izabrana adresa ne pripada korisniku."
+                );
+            }
+
+            order.DeliveryStreet = address.Street;
+            order.DeliveryCity = address.City;
+            order.DeliveryPhoneNumber = address.PhoneNumber;
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                return BadRequest(
+                    "Broj telefona je obavezan za lično preuzimanje."
+                );
+            }
+
+            order.DeliveryStreet = string.Empty;
+            order.DeliveryCity = string.Empty;
+            order.DeliveryPhoneNumber = request.PhoneNumber.Trim();
+        }
 
         decimal totalPrice = 0;
 
@@ -84,7 +132,9 @@ public class OrdersController : ControllerBase
         {
             if (requestedItem.Quantity <= 0)
             {
-                return BadRequest("Količina stavke mora biti veća od 0.");
+                return BadRequest(
+                    "Količina stavke mora biti veća od 0."
+                );
             }
 
             var menuItem = await _context.MenuItems
@@ -99,10 +149,14 @@ public class OrdersController : ControllerBase
                 );
             }
 
-            if (!string.IsNullOrWhiteSpace(requestedItem.Note) &&
-                requestedItem.Note.Length > 200)
+            if (
+                !string.IsNullOrWhiteSpace(requestedItem.Note) &&
+                requestedItem.Note.Length > 200
+            )
             {
-                return BadRequest("Napomena može imati najviše 200 karaktera.");
+                return BadRequest(
+                    "Napomena može imati najviše 200 karaktera."
+                );
             }
 
             var orderItem = new OrderItem
@@ -132,8 +186,10 @@ public class OrdersController : ControllerBase
         return Ok(new
         {
             order.Id,
+            order.FulfillmentType,
             order.Status,
             order.TotalPrice,
+            order.EstimatedReadyAt,
             order.CreatedAt
         });
     }
@@ -162,9 +218,11 @@ public class OrdersController : ControllerBase
                 o.Id,
                 o.RestaurantId,
                 RestaurantName = o.Restaurant.Name,
+                o.FulfillmentType,
                 o.DeliveryStreet,
                 o.DeliveryCity,
                 o.DeliveryPhoneNumber,
+                o.EstimatedReadyAt,
                 o.Status,
                 o.TotalPrice,
                 o.CreatedAt,
@@ -186,9 +244,11 @@ public class OrdersController : ControllerBase
             o.Id,
             o.RestaurantId,
             o.RestaurantName,
+            o.FulfillmentType,
             o.DeliveryStreet,
             o.DeliveryCity,
             o.DeliveryPhoneNumber,
+            o.EstimatedReadyAt,
             o.Status,
             o.TotalPrice,
             o.CreatedAt,
@@ -200,8 +260,9 @@ public class OrdersController : ControllerBase
                 i.UnitPrice,
                 i.Quantity,
                 SelectedSides =
-                    JsonSerializer.Deserialize<List<string>>(i.SelectedSides)
-                    ?? new List<string>(),
+                    JsonSerializer.Deserialize<List<string>>(
+                        i.SelectedSides
+                    ) ?? new List<string>(),
                 i.Note
             })
         });

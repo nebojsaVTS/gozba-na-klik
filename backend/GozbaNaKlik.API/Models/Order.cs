@@ -10,10 +10,18 @@
         public int RestaurantId { get; set; }
         public Restaurant Restaurant { get; set; } = null!;
 
-        // Snapshot adrese u trenutku poručivanja
+        public string FulfillmentType { get; set; } =
+            OrderFulfillmentType.Delivery;
+
+        // Snapshot adrese u trenutku poručivanja.
+        // Za Pickup porudžbine ova polja mogu ostati prazna.
         public string DeliveryStreet { get; set; } = string.Empty;
+
         public string DeliveryCity { get; set; } = string.Empty;
+
         public string DeliveryPhoneNumber { get; set; } = string.Empty;
+
+        public DateTime? EstimatedReadyAt { get; set; }
 
         public string Status { get; set; } = OrderStatus.Pending;
 
