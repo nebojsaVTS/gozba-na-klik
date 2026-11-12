@@ -12,6 +12,10 @@
 
         public string? CoverPhotoUrl { get; set; }
 
+        public bool SupportsDelivery { get; set; }
+
+        public bool SupportsPickup { get; set; }
+
         public int OwnerId { get; set; }
 
         public User Owner { get; set; } = null!;

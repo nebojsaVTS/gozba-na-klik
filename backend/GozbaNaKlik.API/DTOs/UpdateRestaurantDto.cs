@@ -12,5 +12,9 @@ namespace GozbaNaKlik.API.DTOs
 
         [Required(ErrorMessage = "Broj telefona je obavezan.")]
         public string PhoneNumber { get; set; } = string.Empty;
+
+        public bool SupportsDelivery { get; set; }
+
+        public bool SupportsPickup { get; set; }
     }
 }

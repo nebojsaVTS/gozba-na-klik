@@ -107,6 +107,13 @@ namespace GozbaNaKlik.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("EstimatedReadyAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FulfillmentType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("RestaurantId")
                         .HasColumnType("integer");
 
@@ -194,6 +201,12 @@ namespace GozbaNaKlik.API.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("SupportsDelivery")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("SupportsPickup")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
