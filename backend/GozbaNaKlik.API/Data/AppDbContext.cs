@@ -13,13 +13,20 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
 
     public DbSet<Restaurant> Restaurants { get; set; }
+
     public DbSet<Address> Addresses { get; set; }
+
     public DbSet<RestaurantOperatorAssignment> RestaurantOperatorAssignments { get; set; }
 
     public DbSet<MenuItem> MenuItems { get; set; }
 
     public DbSet<Order> Orders { get; set; }
+
     public DbSet<OrderItem> OrderItems { get; set; }
+
+    public DbSet<RestaurantWorkingHours> RestaurantWorkingHours { get; set; }
+
+    public DbSet<RestaurantSpecialWorkingDay> RestaurantSpecialWorkingDays { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +55,40 @@ public class AppDbContext : DbContext
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // RESTAURANT -> WORKING HOURS
+        // Ako se restoran obrise, brise se i njegovo redovno radno vreme.
+        modelBuilder.Entity<RestaurantWorkingHours>()
+            .HasOne(wh => wh.Restaurant)
+            .WithMany(r => r.WorkingHours)
+            .HasForeignKey(wh => wh.RestaurantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Jedan restoran moze imati samo jedan unos za isti dan u nedelji.
+        modelBuilder.Entity<RestaurantWorkingHours>()
+            .HasIndex(wh => new
+            {
+                wh.RestaurantId,
+                wh.DayOfWeek
+            })
+            .IsUnique();
+
+        // RESTAURANT -> SPECIAL WORKING DAYS
+        // Ako se restoran obrise, brisu se i posebni dani rada.
+        modelBuilder.Entity<RestaurantSpecialWorkingDay>()
+            .HasOne(sw => sw.Restaurant)
+            .WithMany(r => r.SpecialWorkingDays)
+            .HasForeignKey(sw => sw.RestaurantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Jedan restoran moze imati samo jedan poseban unos za isti datum.
+        modelBuilder.Entity<RestaurantSpecialWorkingDay>()
+            .HasIndex(sw => new
+            {
+                sw.RestaurantId,
+                sw.Date
+            })
+            .IsUnique();
 
         // Preciznost cene porudzbine.
         modelBuilder.Entity<Order>()

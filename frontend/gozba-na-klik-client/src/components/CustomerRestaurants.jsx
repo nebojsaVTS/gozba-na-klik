@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getRestaurants } from "../services/restaurantService";
+import {
+  getRestaurants,
+  getRestaurantAvailability,
+} from "../services/restaurantService";
 import { useNavigate } from "react-router-dom";
 import "./CustomerRestaurants.scss";
 
@@ -7,6 +10,7 @@ const CustomerRestaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const storedCart = localStorage.getItem("gozbaCart");
@@ -18,9 +22,36 @@ const CustomerRestaurants = () => {
   useEffect(() => {
     const loadRestaurants = async () => {
       try {
-        const data = await getRestaurants();
-        setRestaurants(data);
-      } catch {
+        const restaurantData = await getRestaurants();
+
+        const restaurantsWithAvailability = await Promise.all(
+          restaurantData.map(async (restaurant) => {
+            try {
+              const availability = await getRestaurantAvailability(
+                restaurant.id,
+              );
+
+              return {
+                ...restaurant,
+                availability,
+              };
+            } catch (availabilityError) {
+              console.error(
+                `Greška pri učitavanju dostupnosti restorana ${restaurant.id}:`,
+                availabilityError,
+              );
+
+              return {
+                ...restaurant,
+                availability: null,
+              };
+            }
+          }),
+        );
+
+        setRestaurants(restaurantsWithAvailability);
+      } catch (err) {
+        console.error(err);
         setError("Greška prilikom učitavanja restorana.");
       } finally {
         setLoading(false);
@@ -29,6 +60,14 @@ const CustomerRestaurants = () => {
 
     loadRestaurants();
   }, []);
+
+  const formatTime = (time) => {
+    if (!time) {
+      return "";
+    }
+
+    return time.slice(0, 5);
+  };
 
   return (
     <div className="restaurants-container">
@@ -70,16 +109,47 @@ const CustomerRestaurants = () => {
         )}
 
         <div className="restaurants-grid">
-          {restaurants.map((restaurant) => (
-            <div
-              className="restaurant-card"
-              key={restaurant.id}
-              onClick={() => navigate(`/restaurants/${restaurant.id}`)}
-            >
-              <h3>{restaurant.name}</h3>
-              <p>Pogledaj jelovnik</p>
-            </div>
-          ))}
+          {restaurants.map((restaurant) => {
+            const availability = restaurant.availability;
+
+            return (
+              <div
+                className="restaurant-card"
+                key={restaurant.id}
+                onClick={() => navigate(`/restaurants/${restaurant.id}`)}
+              >
+                <h3>{restaurant.name}</h3>
+
+                {availability && !availability.isOpen && (
+                  <div className="restaurant-availability closed">
+                    <strong>ZATVORENO</strong>
+
+                    {availability.openTime && availability.closeTime && (
+                      <span>
+                        Radno vreme danas: {formatTime(availability.openTime)}–
+                        {formatTime(availability.closeTime)}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {availability?.isOpen && availability.isClosingSoon && (
+                  <div className="restaurant-availability closing-soon">
+                    <strong>USKORO ZATVARA</strong>
+
+                    {availability.closeTime && (
+                      <span>
+                        Radno vreme danas: do{" "}
+                        {formatTime(availability.closeTime)}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <p>Pogledaj jelovnik</p>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

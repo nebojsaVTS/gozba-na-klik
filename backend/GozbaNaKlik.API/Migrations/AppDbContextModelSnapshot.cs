@@ -238,6 +238,68 @@ namespace GozbaNaKlik.API.Migrations
                     b.ToTable("RestaurantOperatorAssignments");
                 });
 
+            modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantSpecialWorkingDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<TimeOnly?>("CloseTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("boolean");
+
+                    b.Property<TimeOnly?>("OpenTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId", "Date")
+                        .IsUnique();
+
+                    b.ToTable("RestaurantSpecialWorkingDays");
+                });
+
+            modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantWorkingHours", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<TimeOnly?>("CloseTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("boolean");
+
+                    b.Property<TimeOnly?>("OpenTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RestaurantId", "DayOfWeek")
+                        .IsUnique();
+
+                    b.ToTable("RestaurantWorkingHours");
+                });
+
             modelBuilder.Entity("GozbaNaKlik.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -375,6 +437,28 @@ namespace GozbaNaKlik.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantSpecialWorkingDay", b =>
+                {
+                    b.HasOne("GozbaNaKlik.API.Models.Restaurant", "Restaurant")
+                        .WithMany("SpecialWorkingDays")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
+            modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantWorkingHours", b =>
+                {
+                    b.HasOne("GozbaNaKlik.API.Models.Restaurant", "Restaurant")
+                        .WithMany("WorkingHours")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+                });
+
             modelBuilder.Entity("GozbaNaKlik.API.Models.Order", b =>
                 {
                     b.Navigation("Items");
@@ -383,6 +467,10 @@ namespace GozbaNaKlik.API.Migrations
             modelBuilder.Entity("GozbaNaKlik.API.Models.Restaurant", b =>
                 {
                     b.Navigation("MenuItems");
+
+                    b.Navigation("SpecialWorkingDays");
+
+                    b.Navigation("WorkingHours");
                 });
 #pragma warning restore 612, 618
         }

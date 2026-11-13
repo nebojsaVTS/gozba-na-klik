@@ -1,5 +1,6 @@
 using GozbaNaKlik.API.Data;
 using GozbaNaKlik.API.Repositories;
+using GozbaNaKlik.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -16,8 +17,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     ));
 
 builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+builder.Services.AddScoped<RestaurantAvailabilityService>();
 
 const string frontendDevCorsPolicy = "FrontendDev";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(frontendDevCorsPolicy, policy =>
