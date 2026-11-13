@@ -61,12 +61,6 @@
   font-weight: 500;
 }
 
-.operator-orders-count {
-  margin: 12px 0 28px;
-  font-size: 18px;
-  color: #6b5b52;
-}
-
 .operator-options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -82,6 +76,7 @@
   cursor: pointer;
   transition: 0.2s ease;
   text-align: center;
+  position: relative;
 }
 
 .operator-option-card:hover:not(:disabled) {
@@ -108,4 +103,21 @@
 .operator-option-card:disabled {
   cursor: default;
   opacity: 0.65;
+}
+
+.operator-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background-color: #d32f2f;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

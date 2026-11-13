@@ -1,6 +1,6 @@
 import "./RestaurantOrders.scss";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   getOrders,
   acceptOrder,
@@ -51,8 +51,11 @@ function OrderDetails({ order }) {
 
 function RestaurantOrders() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
+
+  const view = searchParams.get("view") === "active" ? "active" : "new";
 
   useEffect(() => {
     const stored = localStorage.getItem("gozbaUser");
@@ -113,76 +116,101 @@ function RestaurantOrders() {
 
         <h1>Porudžbine</h1>
 
-        <section>
-          <h2>Nove porudžbine</h2>
+        <div className="orders-tabs">
+          <button
+            type="button"
+            className={
+              view === "new" ? "orders-tab orders-tab-active" : "orders-tab"
+            }
+            onClick={() => setSearchParams({ view: "new" })}
+          >
+            Nove porudžbine
+          </button>
+          <button
+            type="button"
+            className={
+              view === "active" ? "orders-tab orders-tab-active" : "orders-tab"
+            }
+            onClick={() => setSearchParams({ view: "active" })}
+          >
+            Aktivne porudžbine
+          </button>
+        </div>
 
-          {newOrders.length === 0 && (
-            <p className="orders-empty">Trenutno nema novih porudžbina.</p>
-          )}
+        {view === "new" && (
+          <section>
+            <h2>Nove porudžbine</h2>
 
-          {newOrders.map((order) => (
-            <div className="order-card" key={order.id}>
-              <h3>Porudžbina #{order.id}</h3>
+            {newOrders.length === 0 && (
+              <p className="orders-empty">Trenutno nema novih porudžbina.</p>
+            )}
 
-              <OrderDetails order={order} />
+            {newOrders.map((order) => (
+              <div className="order-card" key={order.id}>
+                <h3>Porudžbina #{order.id}</h3>
 
-              <div className="order-actions">
-                <button
-                  type="button"
-                  className="order-accept-button"
-                  onClick={() => handleAccept(order.id)}
-                >
-                  Prihvati
-                </button>
-                <button
-                  type="button"
-                  className="order-reject-button"
-                  onClick={() => handleReject(order.id)}
-                >
-                  Odbij
-                </button>
+                <OrderDetails order={order} />
+
+                <div className="order-actions">
+                  <button
+                    type="button"
+                    className="order-accept-button"
+                    onClick={() => handleAccept(order.id)}
+                  >
+                    Prihvati
+                  </button>
+                  <button
+                    type="button"
+                    className="order-reject-button"
+                    onClick={() => handleReject(order.id)}
+                  >
+                    Odbij
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </section>
+            ))}
+          </section>
+        )}
 
-        <section>
-          <h2>Aktivne porudžbine</h2>
+        {view === "active" && (
+          <section>
+            <h2>Aktivne porudžbine</h2>
 
-          {activeOrders.length === 0 && (
-            <p className="orders-empty">Trenutno nema aktivnih porudžbina.</p>
-          )}
+            {activeOrders.length === 0 && (
+              <p className="orders-empty">Trenutno nema aktivnih porudžbina.</p>
+            )}
 
-          {activeOrders.map((order) => (
-            <div className="order-card" key={order.id}>
-              <h3>
-                Porudžbina #{order.id} — {statusLabels[order.status]}
-              </h3>
+            {activeOrders.map((order) => (
+              <div className="order-card" key={order.id}>
+                <h3>
+                  Porudžbina #{order.id} — {statusLabels[order.status]}
+                </h3>
 
-              <OrderDetails order={order} />
+                <OrderDetails order={order} />
 
-              {order.status === "Accepted" && (
-                <button
-                  type="button"
-                  className="order-status-button"
-                  onClick={() => handleStatusChange(order.id, "InPreparation")}
-                >
-                  U pripremu
-                </button>
-              )}
+                {order.status === "Accepted" && (
+                  <button
+                    type="button"
+                    className="order-status-button"
+                    onClick={() => handleStatusChange(order.id, "InPreparation")}
+                  >
+                    U pripremu
+                  </button>
+                )}
 
-              {order.status === "InPreparation" && (
-                <button
-                  type="button"
-                  className="order-status-button"
-                  onClick={() => handleStatusChange(order.id, "Ready")}
-                >
-                  Spremno
-                </button>
-              )}
-            </div>
-          ))}
-        </section>
+                {order.status === "InPreparation" && (
+                  <button
+                    type="button"
+                    className="order-status-button"
+                    onClick={() => handleStatusChange(order.id, "Ready")}
+                  >
+                    Spremno
+                  </button>
+                )}
+              </div>
+            ))}
+          </section>
+        )}
       </div>
     </div>
   );
