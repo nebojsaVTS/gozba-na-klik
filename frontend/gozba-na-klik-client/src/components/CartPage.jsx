@@ -1,17 +1,46 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getRestaurantAvailability } from "../services/restaurantService";
 import "./CartPage.scss";
 
 const CartPage = () => {
   const navigate = useNavigate();
+
   const [cart, setCart] = useState(null);
+  const [availability, setAvailability] = useState(null);
+  const [loadingAvailability, setLoadingAvailability] = useState(false);
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("gozbaCart");
+    const loadCart = async () => {
+      const storedCart = localStorage.getItem("gozbaCart");
 
-    if (storedCart) {
-      setCart(JSON.parse(storedCart));
-    }
+      if (!storedCart) {
+        return;
+      }
+
+      const parsedCart = JSON.parse(storedCart);
+      setCart(parsedCart);
+
+      if (!parsedCart.restaurantId) {
+        return;
+      }
+
+      try {
+        setLoadingAvailability(true);
+
+        const availabilityData = await getRestaurantAvailability(
+          parsedCart.restaurantId,
+        );
+
+        setAvailability(availabilityData);
+      } catch (err) {
+        console.error("Greška prilikom učitavanja statusa restorana:", err);
+      } finally {
+        setLoadingAvailability(false);
+      }
+    };
+
+    loadCart();
   }, []);
 
   const saveCart = (updatedCart) => {
@@ -66,6 +95,14 @@ const CartPage = () => {
     }
   };
 
+  const formatTime = (time) => {
+    if (!time) {
+      return "";
+    }
+
+    return time.slice(0, 5);
+  };
+
   const totalPrice =
     cart?.items.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -93,6 +130,8 @@ const CartPage = () => {
     );
   }
 
+  const restaurantIsClosed = availability && !availability.isOpen;
+
   return (
     <div className="cart-container">
       <div className="cart-content">
@@ -107,6 +146,35 @@ const CartPage = () => {
         <h2>Korpa</h2>
 
         <h3>{cart.restaurantName}</h3>
+
+        {!loadingAvailability && availability && !availability.isOpen && (
+          <div className="cart-availability closed">
+            <strong>
+              Restoran je trenutno zatvoren i ne prima porudžbine.
+            </strong>
+
+            {availability.openTime && availability.closeTime && (
+              <span>
+                Radno vreme danas: {formatTime(availability.openTime)}–
+                {formatTime(availability.closeTime)}
+              </span>
+            )}
+          </div>
+        )}
+
+        {!loadingAvailability &&
+          availability?.isOpen &&
+          availability.isClosingSoon && (
+            <div className="cart-availability closing-soon">
+              <strong>Restoran se uskoro zatvara.</strong>
+
+              {availability.closeTime && (
+                <span>
+                  Radno vreme danas je do {formatTime(availability.closeTime)}.
+                </span>
+              )}
+            </div>
+          )}
 
         <div className="cart-items">
           {cart.items.map((item) => (
@@ -164,9 +232,14 @@ const CartPage = () => {
         <button
           type="button"
           className="checkout-button"
+          disabled={restaurantIsClosed || loadingAvailability}
           onClick={() => navigate("/checkout")}
         >
-          Nastavi sa poručivanjem
+          {loadingAvailability
+            ? "Provera restorana..."
+            : restaurantIsClosed
+              ? "Restoran je zatvoren"
+              : "Nastavi sa poručivanjem"}
         </button>
       </div>
     </div>

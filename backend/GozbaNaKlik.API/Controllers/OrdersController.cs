@@ -2,6 +2,7 @@
 using GozbaNaKlik.API.Data;
 using GozbaNaKlik.API.DTOs;
 using GozbaNaKlik.API.Models;
+using GozbaNaKlik.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,14 @@ namespace GozbaNaKlik.API.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly RestaurantAvailabilityService _availabilityService;
 
-    public OrdersController(AppDbContext context)
+    public OrdersController(
+        AppDbContext context,
+        RestaurantAvailabilityService availabilityService)
     {
         _context = context;
+        _availabilityService = availabilityService;
     }
 
     [HttpPost]
@@ -57,6 +62,14 @@ public class OrdersController : ControllerBase
         if (restaurant == null)
         {
             return NotFound("Restoran nije pronađen.");
+        }
+
+        var availability =
+            await _availabilityService.GetAvailabilityAsync(restaurant.Id);
+
+        if (!availability.IsOpen)
+        {
+            return BadRequest(availability.Message);
         }
 
         if (

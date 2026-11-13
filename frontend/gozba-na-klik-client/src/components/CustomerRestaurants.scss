@@ -89,6 +89,40 @@
   font-weight: 600;
 }
 
+.restaurant-availability {
+  width: 100%;
+  margin: 4px 0 14px;
+  padding: 12px 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+}
+
+.restaurant-availability strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.restaurant-availability span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.restaurant-availability.closed {
+  background-color: #fdecea;
+  color: #b42318;
+}
+
+.restaurant-availability.closing-soon {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
 .restaurants-message {
   text-align: center;
   color: #332923;
@@ -98,6 +132,24 @@
 
 .restaurants-message.error {
   color: #d32f2f;
+}
+
+.restaurants-cart-button {
+  justify-self: end;
+  padding: 10px 16px;
+  border: 1px solid #f26a1b;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #f26a1b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.restaurants-cart-button:hover {
+  background-color: #f26a1b;
+  color: #ffffff;
 }
 
 @media (max-width: 700px) {
@@ -122,21 +174,9 @@
   .restaurants-header-placeholder {
     display: none;
   }
-}
-.restaurants-cart-button {
-  justify-self: end;
-  padding: 10px 16px;
-  border: 1px solid #f26a1b;
-  border-radius: 10px;
-  background-color: transparent;
-  color: #f26a1b;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
 
-.restaurants-cart-button:hover {
-  background-color: #f26a1b;
-  color: #ffffff;
+  .restaurants-cart-button {
+    grid-row: 3;
+    justify-self: start;
+  }
 }

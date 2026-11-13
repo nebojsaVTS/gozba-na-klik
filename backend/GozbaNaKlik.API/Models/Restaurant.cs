@@ -20,6 +20,13 @@
 
         public User Owner { get; set; } = null!;
 
-        public ICollection<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
+        public ICollection<MenuItem> MenuItems { get; set; } =
+            new List<MenuItem>();
+
+        public ICollection<RestaurantWorkingHours> WorkingHours { get; set; } =
+            new List<RestaurantWorkingHours>();
+
+        public ICollection<RestaurantSpecialWorkingDay> SpecialWorkingDays { get; set; } =
+            new List<RestaurantSpecialWorkingDay>();
     }
 }
