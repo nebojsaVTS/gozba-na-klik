@@ -6,6 +6,7 @@ import { getOrders } from "../services/restaurantOrderService";
 
 function RestaurantOperatorHomePage() {
   const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
   const [restaurantName, setRestaurantName] = useState("");
   const [loadError, setLoadError] = useState("");
@@ -13,12 +14,14 @@ function RestaurantOperatorHomePage() {
 
   useEffect(() => {
     const stored = localStorage.getItem("gozbaUser");
+
     if (!stored) {
       navigate("/login");
       return;
     }
 
     const parsedUser = JSON.parse(stored);
+
     if (parsedUser.role !== "RestaurantOperator") {
       navigate("/login");
       return;
@@ -37,17 +40,21 @@ function RestaurantOperatorHomePage() {
         if (!response.ok) {
           throw new Error("Greška pri učitavanju dodele.");
         }
+
         return response.json();
       })
       .then((data) => {
         const assignment = data.find((a) => a.userId === user.id);
+
         if (assignment) {
           setRestaurantName(assignment.restaurantName);
         } else {
           setLoadError("Nisi dodeljen nijednom restoranu.");
         }
       })
-      .catch(() => setLoadError("Greška pri učitavanju podataka o restoranu."));
+      .catch(() => {
+        setLoadError("Greška pri učitavanju podataka o restoranu.");
+      });
   }, [user]);
 
   useEffect(() => {
@@ -56,16 +63,17 @@ function RestaurantOperatorHomePage() {
     }
 
     getOrders().then((orders) => {
-      const pendingCount = orders.filter((order) => order.status === "Pending").length;
+      const pendingCount = orders.filter(
+        (order) => order.status === "Pending",
+      ).length;
+
       setNewOrdersCount(pendingCount);
     });
   }, [user]);
 
   const handleLogout = () => {
     localStorage.removeItem("gozbaUser");
-    navigate("/login", {
-      state: { logoutMessage: "Uspešno ste se odjavili." },
-    });
+    navigate("/", { replace: true });
   };
 
   if (!user) {
@@ -77,6 +85,7 @@ function RestaurantOperatorHomePage() {
       <div className="operator-home-content">
         <div className="operator-home-header">
           <h1>Gozba na klik</h1>
+
           <button
             className="operator-logout-button"
             type="button"
@@ -86,30 +95,33 @@ function RestaurantOperatorHomePage() {
           </button>
         </div>
 
-        {restaurantName && <p className="operator-restaurant-name">{restaurantName}</p>}
+        {restaurantName && (
+          <p className="operator-restaurant-name">{restaurantName}</p>
+        )}
+
         {loadError && <p className="operator-error">{loadError}</p>}
 
         <div className="operator-options">
-  <button
-    className="operator-option-card"
-    type="button"
-    onClick={() => navigate("/restaurant-operator/orders?view=new")}
-  >
-    <h2>Nove porudžbine</h2>
-    {newOrdersCount > 0 && (
-      <span className="operator-badge">{newOrdersCount}</span>
-    )}
-  </button>
+          <button
+            className="operator-option-card"
+            type="button"
+            onClick={() => navigate("/restaurant-operator/orders?view=new")}
+          >
+            <h2>Nove porudžbine</h2>
 
-  <button
-    className="operator-option-card"
-    type="button"
-    onClick={() => navigate("/restaurant-operator/orders?view=active")}
-  >
-    <h2>Aktivne porudžbine</h2>
-  </button>
-</div>
+            {newOrdersCount > 0 && (
+              <span className="operator-badge">{newOrdersCount}</span>
+            )}
+          </button>
 
+          <button
+            className="operator-option-card"
+            type="button"
+            onClick={() => navigate("/restaurant-operator/orders?view=active")}
+          >
+            <h2>Aktivne porudžbine</h2>
+          </button>
+        </div>
       </div>
     </div>
   );
