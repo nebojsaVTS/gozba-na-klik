@@ -176,7 +176,9 @@
 }
 
 .adresa-edit-form input,
-.adresa-new input {
+.adresa-edit-form select,
+.adresa-new input,
+.adresa-new select {
   padding: 12px 14px;
   border: 1px solid #e0c7b2;
   border-radius: 10px;
@@ -184,11 +186,22 @@
   outline: none;
   width: 100%;
   box-sizing: border-box;
+  background-color: #ffffff;
+  color: #332923;
 }
 
 .adresa-edit-form input:focus,
-.adresa-new input:focus {
+.adresa-edit-form select:focus,
+.adresa-new input:focus,
+.adresa-new select:focus {
   border-color: #f26a1b;
+}
+
+.adresa-edit-form select:disabled,
+.adresa-new select:disabled {
+  background-color: #f3f0ed;
+  color: #9b918b;
+  cursor: not-allowed;
 }
 
 .phone-input-wrapper {
@@ -202,12 +215,10 @@
   align-items: center;
   justify-content: center;
   padding: 0 14px;
-
   background-color: #f2e4d4;
   border: 1px solid #e0c7b2;
   border-right: none;
   border-radius: 10px 0 0 10px;
-
   color: #332923;
   font-size: 15px;
   font-weight: 600;
