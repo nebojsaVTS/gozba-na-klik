@@ -15,10 +15,7 @@ const CustomerHomePage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("gozbaUser");
-
-    navigate("/login", {
-      state: { logoutMessage: "Uspešno ste se odjavili." },
-    });
+    navigate("/", { replace: true });
   };
 
   return (
