@@ -121,7 +121,10 @@ public class OrdersController : ControllerBase
                 );
             }
 
-            order.DeliveryStreet = address.Street;
+            order.DeliveryStreet = string.IsNullOrWhiteSpace(address.HouseNumber)
+                ? address.Street
+                : $"{address.Street} {address.HouseNumber}";
+
             order.DeliveryCity = address.City;
             order.DeliveryPhoneNumber = address.PhoneNumber;
         }

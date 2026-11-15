@@ -22,16 +22,12 @@ public class AddressesController : ControllerBase
     {
         var addresses = await _context.Addresses
             .Where(a => a.UserId == userId)
+            .Include(a => a.StreetEntity)
+                .ThenInclude(s => s!.Settlement)
+                    .ThenInclude(s => s.Municipality)
             .ToListAsync();
 
-        var result = addresses.Select(a => new AddressResponseDto
-        {
-            Id = a.Id,
-            Street = a.Street,
-            City = a.City,
-            PhoneNumber = a.PhoneNumber,
-            UserId = a.UserId
-        });
+        var result = addresses.Select(MapToResponseDto);
 
         return Ok(result);
     }
@@ -39,21 +35,18 @@ public class AddressesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var address = await _context.Addresses.FindAsync(id);
+        var address = await _context.Addresses
+            .Include(a => a.StreetEntity)
+                .ThenInclude(s => s!.Settlement)
+                    .ThenInclude(s => s.Municipality)
+            .FirstOrDefaultAsync(a => a.Id == id);
 
         if (address == null)
         {
             return NotFound("Adresa ne postoji.");
         }
 
-        return Ok(new AddressResponseDto
-        {
-            Id = address.Id,
-            Street = address.Street,
-            City = address.City,
-            PhoneNumber = address.PhoneNumber,
-            UserId = address.UserId
-        });
+        return Ok(MapToResponseDto(address));
     }
 
     [HttpPost]
@@ -71,62 +64,94 @@ public class AddressesController : ControllerBase
             return BadRequest("Korisnik sa tim ID ne postoji.");
         }
 
+        var street = await _context.Streets
+            .Include(s => s.Settlement)
+                .ThenInclude(s => s.Municipality)
+            .FirstOrDefaultAsync(s => s.Id == dto.StreetId);
+
+        if (street == null)
+        {
+            return BadRequest("Izabrana ulica ne postoji.");
+        }
+
+        var houseNumber = dto.HouseNumber.Trim();
+
+        if (string.IsNullOrWhiteSpace(houseNumber))
+        {
+            return BadRequest("Broj kuće ili zgrade je obavezan.");
+        }
+
         var address = new Address
         {
-            Street = dto.Street.Trim(),
-            City = dto.City.Trim(),
+            StreetId = street.Id,
+            StreetEntity = street,
+
+            HouseNumber = houseNumber,
             PhoneNumber = dto.PhoneNumber.Trim(),
-            UserId = dto.UserId
+            UserId = dto.UserId,
+
+            // Privremeno cuvamo i stare tekstualne vrednosti
+            // dok frontend i ostatak sistema potpuno ne predju
+            // na strukturisani model.
+            Street = street.Name,
+            City = street.Settlement.Name
         };
 
         _context.Addresses.Add(address);
         await _context.SaveChangesAsync();
 
-        var response = new AddressResponseDto
-        {
-            Id = address.Id,
-            Street = address.Street,
-            City = address.City,
-            PhoneNumber = address.PhoneNumber,
-            UserId = address.UserId
-        };
-
         return CreatedAtAction(
             nameof(GetById),
             new { id = address.Id },
-            response
+            MapToResponseDto(address)
         );
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAddress(int id, UpdateAddressDto dto)
     {
-        var address = await _context.Addresses.FindAsync(id);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var address = await _context.Addresses
+            .FirstOrDefaultAsync(a => a.Id == id);
 
         if (address == null)
         {
             return NotFound("Adresa ne postoji.");
         }
 
-        if (!ModelState.IsValid)
+        var street = await _context.Streets
+            .Include(s => s.Settlement)
+                .ThenInclude(s => s.Municipality)
+            .FirstOrDefaultAsync(s => s.Id == dto.StreetId);
+
+        if (street == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest("Izabrana ulica ne postoji.");
         }
 
-        address.Street = dto.Street.Trim();
-        address.City = dto.City.Trim();
+        var houseNumber = dto.HouseNumber.Trim();
+
+        if (string.IsNullOrWhiteSpace(houseNumber))
+        {
+            return BadRequest("Broj kuće ili zgrade je obavezan.");
+        }
+
+        address.StreetId = street.Id;
+        address.StreetEntity = street;
+        address.HouseNumber = houseNumber;
         address.PhoneNumber = dto.PhoneNumber.Trim();
+
+        // Privremena kompatibilnost sa starim sistemom.
+        address.Street = street.Name;
+        address.City = street.Settlement.Name;
 
         await _context.SaveChangesAsync();
 
-        return Ok(new AddressResponseDto
-        {
-            Id = address.Id,
-            Street = address.Street,
-            City = address.City,
-            PhoneNumber = address.PhoneNumber,
-            UserId = address.UserId
-        });
+        return Ok(MapToResponseDto(address));
     }
 
     [HttpDelete("{id}")]
@@ -143,5 +168,39 @@ public class AddressesController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok("Adresa je uspešno obrisana.");
+    }
+
+    private static AddressResponseDto MapToResponseDto(Address address)
+    {
+        var streetName =
+            address.StreetEntity?.Name
+            ?? address.Street;
+
+        var settlementName =
+            address.StreetEntity?.Settlement?.Name
+            ?? address.City;
+
+        var municipalityName =
+            address.StreetEntity?.Settlement?.Municipality?.Name
+            ?? string.Empty;
+
+        return new AddressResponseDto
+        {
+            Id = address.Id,
+
+            // Stari response podaci za trenutni frontend.
+            Street = streetName,
+            City = settlementName,
+
+            // Novi strukturisani podaci.
+            StreetId = address.StreetId,
+            StreetName = streetName,
+            HouseNumber = address.HouseNumber,
+            SettlementName = settlementName,
+            MunicipalityName = municipalityName,
+
+            PhoneNumber = address.PhoneNumber,
+            UserId = address.UserId
+        };
     }
 }

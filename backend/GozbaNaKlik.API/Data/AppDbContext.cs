@@ -1,5 +1,6 @@
 ﻿using GozbaNaKlik.API.Models;
 using Microsoft.EntityFrameworkCore;
+using GozbaNaKlik.API.Data.Seed.Sid;
 
 namespace GozbaNaKlik.API.Data;
 
@@ -15,6 +16,12 @@ public class AppDbContext : DbContext
     public DbSet<Restaurant> Restaurants { get; set; }
 
     public DbSet<Address> Addresses { get; set; }
+
+    public DbSet<Municipality> Municipalities { get; set; }
+
+    public DbSet<Settlement> Settlements { get; set; }
+
+    public DbSet<Street> Streets { get; set; }
 
     public DbSet<RestaurantOperatorAssignment> RestaurantOperatorAssignments { get; set; }
 
@@ -55,6 +62,49 @@ public class AppDbContext : DbContext
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // MUNICIPALITY -> SETTLEMENTS
+        // Ako se obrise opstina, brisu se i naselja koja joj pripadaju.
+        modelBuilder.Entity<Settlement>()
+            .HasOne(s => s.Municipality)
+            .WithMany(m => m.Settlements)
+            .HasForeignKey(s => s.MunicipalityId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Jedna opstina ne moze imati dva naselja sa istim imenom.
+        modelBuilder.Entity<Settlement>()
+            .HasIndex(s => new
+            {
+                s.MunicipalityId,
+                s.Name
+            })
+            .IsUnique();
+
+        // ADDRESS -> STREET
+        // StreetId je za sada nullable jer postojece adrese jos koriste
+        // tekstualna Street i City polja.
+        modelBuilder.Entity<Address>()
+            .HasOne(a => a.StreetEntity)
+            .WithMany(s => s.Addresses)
+            .HasForeignKey(a => a.StreetId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // SETTLEMENT -> STREETS
+        // Ako se obrise naselje, brisu se i ulice koje mu pripadaju
+        modelBuilder.Entity<Street>()
+            .HasOne(s => s.Settlement)
+            .WithMany(s => s.Streets)
+            .HasForeignKey(s => s.SettlementId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Jedno naselje ne moze imati dve ulice sa istim imenom.
+        modelBuilder.Entity<Street>()
+            .HasIndex(s => new
+            {
+                s.SettlementId,
+                s.Name
+            })
+            .IsUnique();
 
         // RESTAURANT -> WORKING HOURS
         // Ako se restoran obrise, brise se i njegovo redovno radno vreme.
@@ -100,8 +150,11 @@ public class AppDbContext : DbContext
             .Property(oi => oi.UnitPrice)
             .HasPrecision(12, 2);
 
-        // Hash od "admin123", izracunat unapred (PasswordHasher generise random salt
-        // pri svakom pozivu, pa se ne moze racunati ovde - HasData zahteva fiksnu vrednost).
+        // Seed podaci za opstinu Sid.
+        SidSeed.Seed(modelBuilder);
+        SidStreetsSeed.Seed(modelBuilder);
+
+        // Hash od "admin123", izracunat unapred.
         const string seedAdminPasswordHash =
             "AQAAAAIAAYagAAAAEKSqiTVL7qi6w2Gudvv5zFdzM2mFmGThBwj1by8cRHcWE4K76EWw77qSAK1J/nFvuA==";
 

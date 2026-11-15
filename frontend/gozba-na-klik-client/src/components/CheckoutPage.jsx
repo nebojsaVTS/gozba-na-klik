@@ -290,8 +290,13 @@ const CheckoutPage = () => {
                       />
 
                       <div>
-                        <strong>{address.street}</strong>
-                        <p>{address.city}</p>
+                        <strong>
+                          {address.streetName || address.street}
+                          {address.houseNumber ? ` ${address.houseNumber}` : ""}
+                        </strong>
+
+                        <p>{address.settlementName || address.city}</p>
+
                         <p>{address.phoneNumber}</p>
                       </div>
                     </label>
