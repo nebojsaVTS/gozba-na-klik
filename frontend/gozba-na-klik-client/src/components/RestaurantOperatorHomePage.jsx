@@ -89,21 +89,22 @@ function RestaurantOperatorHomePage() {
         {restaurantName && <p className="operator-restaurant-name">{restaurantName}</p>}
         {loadError && <p className="operator-error">{loadError}</p>}
 
-        <p className="operator-orders-count">Nove porudžbine: {newOrdersCount}</p>
-
         <div className="operator-options">
   <button
     className="operator-option-card"
     type="button"
-    onClick={() => navigate("/restaurant-operator/orders")}
+    onClick={() => navigate("/restaurant-operator/orders?view=new")}
   >
     <h2>Nove porudžbine</h2>
+    {newOrdersCount > 0 && (
+      <span className="operator-badge">{newOrdersCount}</span>
+    )}
   </button>
 
   <button
     className="operator-option-card"
     type="button"
-    onClick={() => navigate("/restaurant-operator/orders")}
+    onClick={() => navigate("/restaurant-operator/orders?view=active")}
   >
     <h2>Aktivne porudžbine</h2>
   </button>

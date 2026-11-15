@@ -184,3 +184,35 @@
   background-color: #f26a1b;
   color: #ffffff;
 }
+
+.orders-tabs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.orders-tab {
+  padding: 10px 20px;
+  border: 1px solid #f26a1b;
+  border-radius: 10px;
+  background-color: transparent;
+  color: #f26a1b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.orders-tab:hover {
+  background-color: #f2e4d4;
+}
+
+.orders-tab-active {
+  background-color: #f26a1b;
+  color: #ffffff;
+}
+
+.orders-tab-active:hover {
+  background-color: #d95b14;
+}
