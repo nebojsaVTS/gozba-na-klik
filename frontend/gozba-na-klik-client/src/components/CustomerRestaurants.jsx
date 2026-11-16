@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BackButton from "./BackButton";
 import {
   getRestaurants,
   getRestaurantAvailability,
@@ -73,13 +74,7 @@ const CustomerRestaurants = () => {
     <div className="restaurants-container">
       <div className="restaurants-content">
         <div className="restaurants-header">
-          <button
-            type="button"
-            className="restaurants-back-button"
-            onClick={() => navigate("/kupac")}
-          >
-            ← Nazad na početnu
-          </button>
+          <BackButton to="/kupac" />
 
           <h2>Restorani</h2>
 
