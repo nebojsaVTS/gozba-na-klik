@@ -2,12 +2,13 @@ import "./Login.scss";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../api";
+import Footer from "./Footer";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [logoutMessage, setLogoutMessage] = useState();
+  const [logoutMessage, setLogoutMessage] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -18,6 +19,7 @@ const Login = () => {
       const timer = setTimeout(() => {
         setLogoutMessage("");
       }, 5000);
+
       return () => clearTimeout(timer);
     }
   }, [location.state]);
@@ -35,55 +37,74 @@ const Login = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
+
         setMessage(errorText || "Neispravno korisničko ime ili lozinka.");
+
         return;
       }
 
       const user = await response.json();
+
       localStorage.setItem("gozbaUser", JSON.stringify(user));
 
-      if (user.role === "Kupac") navigate("/kupac");
-      else if (user.role === "Vlasnik restorana") navigate("/vlasnik");
-      else if (user.role === "Administrator") navigate("/administrator");
-      else if (user.role === "Kurir") navigate("/kurir");
-      else if (user.role === "RestaurantOperator") navigate("/restaurant-operator");
+      if (user.role === "Kupac") {
+        navigate("/kupac");
+      } else if (user.role === "Vlasnik restorana") {
+        navigate("/vlasnik");
+      } else if (user.role === "Administrator") {
+        navigate("/administrator");
+      } else if (user.role === "Kurir") {
+        navigate("/kurir");
+      } else if (user.role === "RestaurantOperator") {
+        navigate("/restaurant-operator");
+      }
     } catch {
       setMessage("Greška prilikom povezivanja sa serverom.");
     }
   };
 
   return (
-    <div className="login-container">
-      {logoutMessage && <p className="logout-toast">{logoutMessage}</p>}
-      <div className="login-card">
-        <h2>Prijava</h2>
+    <div className="login-layout">
+      <main className="login-container">
+        {logoutMessage && <p className="logout-toast">{logoutMessage}</p>}
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+        <div className="login-card">
+          <h2>Prijava</h2>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <form className="login-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
 
-          <button type="submit">Prijavi se</button>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-          {message && <p className="login-message error">{message}</p>}
-        </form>
-      </div>
+            <button type="submit">Prijavi se</button>
+
+            {message && <p className="login-message error">{message}</p>}
+          </form>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
