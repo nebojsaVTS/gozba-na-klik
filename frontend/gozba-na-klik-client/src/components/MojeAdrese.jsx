@@ -2,6 +2,7 @@ import "./MojeAdrese.scss";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { API_BASE_URL } from "../api";
+import BackButton from "./BackButton";
 
 function MojeAdrese() {
   const navigate = useNavigate();
@@ -538,13 +539,7 @@ function MojeAdrese() {
     <div className="adrese-container">
       <div className="adrese-content">
         <div className="adrese-header">
-          <button
-            type="button"
-            className="adrese-back-button"
-            onClick={() => navigate(returnTo || "/kupac")}
-          >
-            ← Nazad
-          </button>
+          <BackButton to={returnTo || "/kupac"} />
 
           <h1>Moje adrese</h1>
 

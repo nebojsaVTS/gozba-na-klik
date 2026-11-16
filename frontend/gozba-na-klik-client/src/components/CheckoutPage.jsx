@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { createOrder } from "../services/orderService";
+import BackButton from "./BackButton";
 import "./CheckoutPage.scss";
 
 const API_BASE_URL = "http://localhost:5171/api";
@@ -204,13 +205,7 @@ const CheckoutPage = () => {
     <div className="checkout-container">
       <div className="checkout-content">
         <div className="checkout-header">
-          <button
-            type="button"
-            className="checkout-back-button"
-            onClick={() => navigate("/cart")}
-          >
-            ← Nazad na korpu
-          </button>
+          <BackButton to="/cart" />
 
           <h2>Potvrda porudžbine</h2>
 

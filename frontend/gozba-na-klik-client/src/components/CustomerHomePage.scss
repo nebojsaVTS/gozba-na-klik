@@ -2,8 +2,11 @@
   min-height: 100vh;
   background-color: #fce4cb;
   padding: 40px;
+
   display: flex;
   justify-content: center;
+
+  box-sizing: border-box;
 }
 
 .customer-home-content {
@@ -14,9 +17,11 @@
 
 .customer-home-header {
   position: relative;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   margin-bottom: 24px;
   min-height: 40px;
 }
@@ -24,13 +29,17 @@
 .customer-user {
   position: absolute;
   left: 0;
+
   display: flex;
   align-items: center;
   gap: 8px;
+
   max-width: 220px;
   padding: 8px 14px;
+
   background-color: #ffffff;
   border-radius: 20px;
+
   box-sizing: border-box;
 }
 
@@ -42,9 +51,11 @@
 .customer-username {
   display: block;
   max-width: 160px;
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
   color: #332923;
   font-size: 15px;
   font-weight: 600;
@@ -52,10 +63,13 @@
 
 .customer-location {
   display: inline-block;
+
   margin: 0;
   padding: 8px 16px;
+
   background-color: #ffffff;
   border-radius: 20px;
+
   color: #f26a1b;
   font-weight: 600;
 }
@@ -63,6 +77,7 @@
 .customer-header-actions {
   position: absolute;
   right: 0;
+
   display: flex;
   align-items: center;
   gap: 10px;
@@ -71,12 +86,16 @@
 .customer-cart-button,
 .customer-logout-button {
   padding: 10px 18px;
+
   border: 1px solid #f26a1b;
   border-radius: 10px;
+
   background-color: transparent;
   color: #f26a1b;
+
   font-size: 15px;
   font-weight: 600;
+
   cursor: pointer;
   transition: 0.2s ease;
 }
@@ -89,13 +108,16 @@
 
 .customer-home-content h1 {
   margin: 0;
+
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 42px;
+
   color: #332923;
 }
 
 .customer-subtitle {
   margin: 12px 0 36px;
+
   font-size: 18px;
   color: #6b5b52;
 }
@@ -109,11 +131,15 @@
 .customer-option-card {
   min-height: 180px;
   padding: 28px;
+
   background-color: #ffffff;
+
   border: none;
   border-radius: 24px;
+
   cursor: pointer;
   transition: 0.2s ease;
+
   text-align: center;
 }
 
@@ -123,23 +149,30 @@
 
 .customer-option-card h2 {
   margin: 0 0 12px;
+
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 26px;
+
   color: #332923;
 }
 
 .customer-option-card p {
   margin: 0 0 14px;
+
   font-size: 16px;
   color: #6b5b52;
 }
 
 .customer-option-card span {
   display: inline-block;
+
   padding: 6px 12px;
+
   border-radius: 16px;
+
   background-color: #fce4cb;
   color: #f26a1b;
+
   font-size: 14px;
   font-weight: 600;
 }
@@ -154,22 +187,68 @@
     padding: 24px 16px;
   }
 
+  .customer-home-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+
+    gap: 12px 10px;
+
+    min-height: auto;
+    margin-bottom: 24px;
+  }
+
   .customer-user {
-    max-width: 120px;
+    position: static;
+
+    grid-column: 1;
+    grid-row: 1;
+
+    justify-self: start;
+
+    max-width: 140px;
     padding: 7px 10px;
   }
 
   .customer-username {
-    max-width: 75px;
+    max-width: 90px;
     font-size: 14px;
   }
 
-  .customer-location {
-    padding: 7px 12px;
+  .customer-header-actions {
+    position: static;
+
+    grid-column: 2;
+    grid-row: 1 / 3;
+
+    justify-self: end;
+    align-self: start;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 10px;
   }
 
-  .customer-header-actions {
-    gap: 6px;
+  .customer-logout-button {
+    order: 1;
+  }
+
+  .customer-cart-button {
+    order: 2;
+  }
+
+  .customer-location {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    justify-self: center;
+
+    margin: 0;
+    padding: 7px 12px;
+
+    font-size: 14px;
   }
 
   .customer-cart-button,
@@ -180,5 +259,41 @@
 
   .customer-home-content h1 {
     font-size: 36px;
+  }
+
+  .customer-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 400px) {
+  .customer-home-container {
+    padding: 20px 12px;
+  }
+
+  .customer-user {
+    max-width: 120px;
+  }
+
+  .customer-username {
+    max-width: 72px;
+  }
+
+  .customer-home-content h1 {
+    font-size: 32px;
+  }
+
+  .customer-subtitle {
+    font-size: 16px;
+    margin-bottom: 28px;
+  }
+
+  .customer-option-card {
+    min-height: 160px;
+    padding: 24px 18px;
+  }
+
+  .customer-option-card h2 {
+    font-size: 24px;
   }
 }

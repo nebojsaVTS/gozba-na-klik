@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getOrdersByUser } from "../services/orderService";
+import BackButton from "./BackButton";
 import "./CustomerOrders.scss";
 
 const CustomerOrders = () => {
@@ -142,13 +143,7 @@ const CustomerOrders = () => {
     <div className="customer-orders-page">
       <div className="customer-orders-container">
         <div className="customer-orders-header">
-          <button
-            type="button"
-            className="customer-orders-back-button"
-            onClick={() => navigate("/kupac")}
-          >
-            Nazad
-          </button>
+          <BackButton to="/kupac" />
 
           <h1>Moje porudžbine</h1>
         </div>

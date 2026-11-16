@@ -6,6 +6,7 @@ import {
   getRestaurantAvailability,
 } from "../services/restaurantService";
 import MenuItemCustomizationModal from "./MenuItemCustomizationModal";
+import BackButton from "./BackButton";
 import "./RestaurantMenu.scss";
 
 const RestaurantMenu = () => {
@@ -150,13 +151,7 @@ const RestaurantMenu = () => {
         {loading && <p className="menu-message">Učitavanje jelovnika...</p>}
 
         <div className="menu-header">
-          <button
-            type="button"
-            className="menu-back-button"
-            onClick={() => navigate("/restaurants")}
-          >
-            ← Nazad na restorane
-          </button>
+          <BackButton to="/restaurants" />
 
           <h2>{restaurant ? restaurant.name : "Jelovnik"}</h2>
 

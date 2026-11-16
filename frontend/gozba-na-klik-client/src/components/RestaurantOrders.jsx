@@ -1,6 +1,7 @@
 import "./RestaurantOrders.scss";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import BackButton from "./BackButton";
 import {
   getOrders,
   acceptOrder,
@@ -26,14 +27,17 @@ function OrderDetails({ order }) {
             {item.quantity}x {item.name}
             {item.variant && ` (${item.variant})`}
           </p>
+
           {item.toppings.length > 0 && (
             <p className="order-item-detail">
               Prilozi: {item.toppings.join(", ")}
             </p>
           )}
+
           {item.note && (
             <p className="order-item-detail">Napomena: {item.note}</p>
           )}
+
           <p className="order-item-price">Cena: {item.price} RSD</p>
         </div>
       ))}
@@ -52,6 +56,7 @@ function OrderDetails({ order }) {
 function RestaurantOrders() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
 
@@ -59,12 +64,14 @@ function RestaurantOrders() {
 
   useEffect(() => {
     const stored = localStorage.getItem("gozbaUser");
+
     if (!stored) {
       navigate("/login");
       return;
     }
 
     const parsedUser = JSON.parse(stored);
+
     if (parsedUser.role !== "RestaurantOperator") {
       navigate("/login");
       return;
@@ -91,6 +98,7 @@ function RestaurantOrders() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     const updated = await updateOrderStatus(orderId, newStatus);
+
     setOrders(updated);
   };
 
@@ -99,22 +107,21 @@ function RestaurantOrders() {
   }
 
   const newOrders = orders.filter((order) => order.status === "Pending");
+
   const activeOrders = orders.filter((order) =>
-    ["Accepted", "InPreparation", "Ready"].includes(order.status)
+    ["Accepted", "InPreparation", "Ready"].includes(order.status),
   );
 
   return (
     <div className="orders-container">
       <div className="orders-content">
-        <button
-          type="button"
-          className="orders-back-button"
-          onClick={() => navigate("/restaurant-operator")}
-        >
-          ← Nazad
-        </button>
+        <div className="orders-header">
+          <BackButton to="/restaurant-operator" />
 
-        <h1>Porudžbine</h1>
+          <h1>Porudžbine</h1>
+
+          <div className="orders-header-placeholder" />
+        </div>
 
         <div className="orders-tabs">
           <button
@@ -126,6 +133,7 @@ function RestaurantOrders() {
           >
             Nove porudžbine
           </button>
+
           <button
             type="button"
             className={
@@ -159,6 +167,7 @@ function RestaurantOrders() {
                   >
                     Prihvati
                   </button>
+
                   <button
                     type="button"
                     className="order-reject-button"
@@ -192,7 +201,9 @@ function RestaurantOrders() {
                   <button
                     type="button"
                     className="order-status-button"
-                    onClick={() => handleStatusChange(order.id, "InPreparation")}
+                    onClick={() =>
+                      handleStatusChange(order.id, "InPreparation")
+                    }
                   >
                     U pripremu
                   </button>
