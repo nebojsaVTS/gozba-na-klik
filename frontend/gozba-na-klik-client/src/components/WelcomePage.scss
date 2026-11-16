@@ -1,11 +1,21 @@
-.welcome-page {
+.welcome-layout {
   min-height: 100vh;
+  background-color: #fce4cb;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-page {
+  flex: 1;
   background-color: #fce4cb;
   padding: 40px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  box-sizing: border-box;
 }
 
 .welcome-card {
@@ -118,4 +128,44 @@
 
 .login-button:hover {
   background-color: #fff3eb;
+}
+
+@media (max-height: 850px) {
+  .welcome-page {
+    padding: 25px 40px;
+  }
+
+  .welcome-card {
+    min-height: 600px;
+  }
+}
+
+@media (max-width: 800px) {
+  .welcome-page {
+    padding: 20px;
+  }
+
+  .welcome-card {
+    min-height: auto;
+    flex-direction: column;
+  }
+
+  .welcome-content {
+    width: 100%;
+    padding: 50px 30px;
+    box-sizing: border-box;
+  }
+
+  .welcome-image {
+    width: 100%;
+    min-height: 300px;
+  }
+
+  .title-main {
+    font-size: 42px;
+  }
+
+  .title-accent {
+    font-size: 28px;
+  }
 }
