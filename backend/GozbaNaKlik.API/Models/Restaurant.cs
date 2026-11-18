@@ -28,5 +28,8 @@
 
         public ICollection<RestaurantSpecialWorkingDay> SpecialWorkingDays { get; set; } =
             new List<RestaurantSpecialWorkingDay>();
+
+        public ICollection<RestaurantDeliveryZone> DeliveryZones { get; set; } =
+            new List<RestaurantDeliveryZone>();
     }
 }
