@@ -35,6 +35,8 @@ public class AppDbContext : DbContext
 
     public DbSet<RestaurantSpecialWorkingDay> RestaurantSpecialWorkingDays { get; set; }
 
+    public DbSet<RestaurantDeliveryZone> RestaurantDeliveryZones { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -90,7 +92,7 @@ public class AppDbContext : DbContext
             .OnDelete(DeleteBehavior.Restrict);
 
         // SETTLEMENT -> STREETS
-        // Ako se obrise naselje, brisu se i ulice koje mu pripadaju
+        // Ako se obrise naselje, brisu se i ulice koje mu pripadaju.
         modelBuilder.Entity<Street>()
             .HasOne(s => s.Settlement)
             .WithMany(s => s.Streets)
@@ -139,6 +141,43 @@ public class AppDbContext : DbContext
                 sw.Date
             })
             .IsUnique();
+
+        // RESTAURANT -> DELIVERY ZONES
+        // Svaki restoran ima sopstvena pravila dostave po naselju.
+        modelBuilder.Entity<RestaurantDeliveryZone>()
+            .HasOne(dz => dz.Restaurant)
+            .WithMany(r => r.DeliveryZones)
+            .HasForeignKey(dz => dz.RestaurantId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // SETTLEMENT -> RESTAURANT DELIVERY ZONES
+        // Naselje ne moze da se obrise dok postoji restoran koji ga koristi
+        // kao zonu dostave.
+        modelBuilder.Entity<RestaurantDeliveryZone>()
+            .HasOne(dz => dz.Settlement)
+            .WithMany(s => s.RestaurantDeliveryZones)
+            .HasForeignKey(dz => dz.SettlementId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Jedan restoran moze imati samo jedno pravilo dostave
+        // za isto naselje.
+        modelBuilder.Entity<RestaurantDeliveryZone>()
+            .HasIndex(dz => new
+            {
+                dz.RestaurantId,
+                dz.SettlementId
+            })
+            .IsUnique();
+
+        // Preciznost cene dostave.
+        modelBuilder.Entity<RestaurantDeliveryZone>()
+            .Property(dz => dz.DeliveryFee)
+            .HasPrecision(12, 2);
+
+        // Preciznost minimalnog iznosa porudzbine.
+        modelBuilder.Entity<RestaurantDeliveryZone>()
+            .Property(dz => dz.MinimumOrderAmount)
+            .HasPrecision(12, 2);
 
         // Preciznost cene porudzbine.
         modelBuilder.Entity<Order>()

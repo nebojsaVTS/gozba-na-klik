@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace GozbaNaKlik.API.Models
+﻿namespace GozbaNaKlik.API.Models
 {
     public class Settlement
     {
@@ -14,5 +12,8 @@ namespace GozbaNaKlik.API.Models
 
         public ICollection<Street> Streets { get; set; } =
             new List<Street>();
+
+        public ICollection<RestaurantDeliveryZone> RestaurantDeliveryZones { get; set; } =
+            new List<RestaurantDeliveryZone>();
     }
 }

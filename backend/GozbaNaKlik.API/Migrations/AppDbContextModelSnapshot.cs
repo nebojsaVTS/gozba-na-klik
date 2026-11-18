@@ -248,6 +248,38 @@ namespace GozbaNaKlik.API.Migrations
                     b.ToTable("Restaurants");
                 });
 
+            modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantDeliveryZone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("DeliveryFee")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<decimal?>("MinimumOrderAmount")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SettlementId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SettlementId");
+
+                    b.HasIndex("RestaurantId", "SettlementId")
+                        .IsUnique();
+
+                    b.ToTable("RestaurantDeliveryZones");
+                });
+
             modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantOperatorAssignment", b =>
                 {
                     b.Property<int>("Id")
@@ -2446,6 +2478,25 @@ namespace GozbaNaKlik.API.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantDeliveryZone", b =>
+                {
+                    b.HasOne("GozbaNaKlik.API.Models.Restaurant", "Restaurant")
+                        .WithMany("DeliveryZones")
+                        .HasForeignKey("RestaurantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GozbaNaKlik.API.Models.Settlement", "Settlement")
+                        .WithMany("RestaurantDeliveryZones")
+                        .HasForeignKey("SettlementId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Restaurant");
+
+                    b.Navigation("Settlement");
+                });
+
             modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantOperatorAssignment", b =>
                 {
                     b.HasOne("GozbaNaKlik.API.Models.Restaurant", "Restaurant")
@@ -2521,6 +2572,8 @@ namespace GozbaNaKlik.API.Migrations
 
             modelBuilder.Entity("GozbaNaKlik.API.Models.Restaurant", b =>
                 {
+                    b.Navigation("DeliveryZones");
+
                     b.Navigation("MenuItems");
 
                     b.Navigation("SpecialWorkingDays");
@@ -2530,6 +2583,8 @@ namespace GozbaNaKlik.API.Migrations
 
             modelBuilder.Entity("GozbaNaKlik.API.Models.Settlement", b =>
                 {
+                    b.Navigation("RestaurantDeliveryZones");
+
                     b.Navigation("Streets");
                 });
 
