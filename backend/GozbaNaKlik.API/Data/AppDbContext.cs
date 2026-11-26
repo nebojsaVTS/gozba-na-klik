@@ -99,6 +99,15 @@ public class AppDbContext : DbContext
             .HasForeignKey(s => s.SettlementId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        // RESTAURANT -> SETTLEMENT
+        // Restoran pripada jednom naselju.
+        // SettlementId je za sada nullable zbog postojecih restorana.
+        modelBuilder.Entity<Restaurant>()
+            .HasOne(r => r.Settlement)
+            .WithMany(s => s.Restaurants)
+            .HasForeignKey(r => r.SettlementId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Jedno naselje ne moze imati dve ulice sa istim imenom.
         modelBuilder.Entity<Street>()
             .HasIndex(s => new

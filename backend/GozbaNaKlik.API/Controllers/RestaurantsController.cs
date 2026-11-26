@@ -65,7 +65,13 @@ public class RestaurantsController : ControllerBase
             OwnerId = r.OwnerId,
             OwnerUsername = r.Owner != null
                 ? r.Owner.Username
-                : string.Empty
+                : string.Empty,
+
+            SettlementId = r.SettlementId,
+            SettlementName = r.Settlement?.Name ?? string.Empty,
+
+            MunicipalityId = r.Settlement?.MunicipalityId,
+            MunicipalityName = r.Settlement?.Municipality?.Name ?? string.Empty
         });
 
         return Ok(result);
@@ -74,14 +80,17 @@ public class RestaurantsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var restaurant = await _context.Restaurants.FindAsync(id);
+        var restaurant = await _context.Restaurants
+            .Include(r => r.Owner)
+            .Include(r => r.Settlement)
+                .ThenInclude(s => s.Municipality)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == id);
 
         if (restaurant == null)
         {
             return NotFound("Restoran ne postoji.");
         }
-
-        var owner = await _context.Users.FindAsync(restaurant.OwnerId);
 
         var response = new RestaurantResponseDto
         {
@@ -89,10 +98,19 @@ public class RestaurantsController : ControllerBase
             Name = restaurant.Name,
             Address = restaurant.Address,
             PhoneNumber = restaurant.PhoneNumber,
+
             SupportsDelivery = restaurant.SupportsDelivery,
             SupportsPickup = restaurant.SupportsPickup,
+
             OwnerId = restaurant.OwnerId,
-            OwnerUsername = owner?.Username ?? string.Empty
+            OwnerUsername = restaurant.Owner?.Username ?? string.Empty,
+
+            SettlementId = restaurant.SettlementId,
+            SettlementName = restaurant.Settlement?.Name ?? string.Empty,
+
+            MunicipalityId = restaurant.Settlement?.MunicipalityId,
+            MunicipalityName =
+                restaurant.Settlement?.Municipality?.Name ?? string.Empty
         };
 
         return Ok(response);
@@ -128,6 +146,15 @@ public class RestaurantsController : ControllerBase
             return BadRequest("Izabrani korisnik nije vlasnik restorana.");
         }
 
+        var settlement = _context.Settlements
+            .Include(s => s.Municipality)
+            .FirstOrDefault(s => s.Id == dto.SettlementId);
+
+        if (settlement == null)
+        {
+            return BadRequest("Izabrano naselje ne postoji.");
+        }
+
         var restaurant = new Restaurant
         {
             Name = dto.Name,
@@ -135,7 +162,8 @@ public class RestaurantsController : ControllerBase
             PhoneNumber = dto.PhoneNumber,
             SupportsDelivery = dto.SupportsDelivery,
             SupportsPickup = dto.SupportsPickup,
-            OwnerId = dto.OwnerId
+            OwnerId = dto.OwnerId,
+            SettlementId = dto.SettlementId
         };
 
         _context.Restaurants.Add(restaurant);
@@ -167,6 +195,9 @@ public class RestaurantsController : ControllerBase
     public IActionResult UpdateRestaurant(int id, UpdateRestaurantDto dto)
     {
         var restaurant = _context.Restaurants
+            .Include(r => r.Owner)
+            .Include(r => r.Settlement)
+                .ThenInclude(s => s.Municipality)
             .FirstOrDefault(r => r.Id == id);
 
         if (restaurant == null)
@@ -186,9 +217,21 @@ public class RestaurantsController : ControllerBase
             );
         }
 
+        var settlement = _context.Settlements
+            .Include(s => s.Municipality)
+            .FirstOrDefault(s => s.Id == dto.SettlementId);
+
+        if (settlement == null)
+        {
+            return BadRequest("Izabrano naselje ne postoji.");
+        }
+
         restaurant.Name = dto.Name;
         restaurant.Address = dto.Address;
         restaurant.PhoneNumber = dto.PhoneNumber;
+
+        restaurant.SettlementId = dto.SettlementId;
+
         restaurant.SupportsDelivery = dto.SupportsDelivery;
         restaurant.SupportsPickup = dto.SupportsPickup;
 
@@ -200,10 +243,18 @@ public class RestaurantsController : ControllerBase
             Name = restaurant.Name,
             Address = restaurant.Address,
             PhoneNumber = restaurant.PhoneNumber,
+
             SupportsDelivery = restaurant.SupportsDelivery,
             SupportsPickup = restaurant.SupportsPickup,
+
             OwnerId = restaurant.OwnerId,
-            OwnerUsername = restaurant.Owner?.Username ?? string.Empty
+            OwnerUsername = restaurant.Owner?.Username ?? string.Empty,
+
+            SettlementId = settlement.Id,
+            SettlementName = settlement.Name,
+
+            MunicipalityId = settlement.MunicipalityId,
+            MunicipalityName = settlement.Municipality?.Name ?? string.Empty
         });
     }
 

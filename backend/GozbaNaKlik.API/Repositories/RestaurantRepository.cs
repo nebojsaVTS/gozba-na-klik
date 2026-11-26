@@ -17,6 +17,8 @@ public class RestaurantRepository : IRestaurantRepository
     {
         return await _context.Restaurants
             .Where(r => r.OwnerId == ownerId)
+            .Include(r => r.Settlement)
+                .ThenInclude(s => s.Municipality)
             .ToListAsync();
     }
 
@@ -24,6 +26,9 @@ public class RestaurantRepository : IRestaurantRepository
     {
         return await _context.Restaurants
             .Include(r => r.Owner)
+            .Include(r => r.Settlement)
+                .ThenInclude(s => s.Municipality)
+            .AsNoTracking()
             .ToListAsync();
     }
 }

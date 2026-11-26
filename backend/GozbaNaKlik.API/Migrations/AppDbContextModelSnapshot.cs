@@ -235,6 +235,9 @@ namespace GozbaNaKlik.API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("SettlementId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("SupportsDelivery")
                         .HasColumnType("boolean");
 
@@ -244,6 +247,8 @@ namespace GozbaNaKlik.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("SettlementId");
 
                     b.ToTable("Restaurants");
                 });
@@ -2475,7 +2480,14 @@ namespace GozbaNaKlik.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("GozbaNaKlik.API.Models.Settlement", "Settlement")
+                        .WithMany("Restaurants")
+                        .HasForeignKey("SettlementId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Owner");
+
+                    b.Navigation("Settlement");
                 });
 
             modelBuilder.Entity("GozbaNaKlik.API.Models.RestaurantDeliveryZone", b =>
@@ -2584,6 +2596,8 @@ namespace GozbaNaKlik.API.Migrations
             modelBuilder.Entity("GozbaNaKlik.API.Models.Settlement", b =>
                 {
                     b.Navigation("RestaurantDeliveryZones");
+
+                    b.Navigation("Restaurants");
 
                     b.Navigation("Streets");
                 });

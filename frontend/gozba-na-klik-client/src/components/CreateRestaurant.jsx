@@ -6,12 +6,17 @@ function CreateRestaurant() {
   const navigate = useNavigate();
 
   const [owners, setOwners] = useState([]);
+  const [municipalities, setMunicipalities] = useState([]);
+  const [settlements, setSettlements] = useState([]);
+
+  const [selectedMunicipalityId, setSelectedMunicipalityId] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
     address: "",
     phoneNumber: "",
     ownerId: "",
+    settlementId: "",
     supportsDelivery: false,
     supportsPickup: false,
   });
@@ -20,20 +25,73 @@ function CreateRestaurant() {
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/admin/users`)
-      .then((response) => response.json())
-      .then((data) => {
-        const restaurantOwners = data.filter(
+    const loadInitialData = async () => {
+      try {
+        const [usersResponse, municipalitiesResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/admin/users`),
+          fetch(`${API_BASE_URL}/Locations/municipalities`),
+        ]);
+
+        if (!usersResponse.ok || !municipalitiesResponse.ok) {
+          throw new Error();
+        }
+
+        const usersData = await usersResponse.json();
+        const municipalitiesData = await municipalitiesResponse.json();
+
+        const restaurantOwners = usersData.filter(
           (u) => u.role === "Vlasnik restorana",
         );
 
         setOwners(restaurantOwners);
-      })
-      .catch(() => {
-        setMessage("Greška pri učitavanju vlasnika!");
+        setMunicipalities(municipalitiesData);
+      } catch {
+        setMessage("Greška pri učitavanju podataka!");
         setIsError(true);
-      });
+      }
+    };
+
+    loadInitialData();
   }, []);
+
+  useEffect(() => {
+    if (!selectedMunicipalityId) {
+      setSettlements([]);
+
+      setFormData((current) => ({
+        ...current,
+        settlementId: "",
+      }));
+
+      return;
+    }
+
+    const loadSettlements = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/Locations/municipalities/${selectedMunicipalityId}/settlements`,
+        );
+
+        if (!response.ok) {
+          throw new Error();
+        }
+
+        const data = await response.json();
+
+        setSettlements(data);
+
+        setFormData((current) => ({
+          ...current,
+          settlementId: "",
+        }));
+      } catch {
+        setMessage("Greška pri učitavanju naselja!");
+        setIsError(true);
+      }
+    };
+
+    loadSettlements();
+  }, [selectedMunicipalityId]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,7 +109,9 @@ function CreateRestaurant() {
       !formData.name.trim() ||
       !formData.address.trim() ||
       !formData.phoneNumber.trim() ||
-      !formData.ownerId
+      !formData.ownerId ||
+      !selectedMunicipalityId ||
+      !formData.settlementId
     ) {
       setMessage("Sva polja su obavezna.");
       setIsError(true);
@@ -77,6 +137,7 @@ function CreateRestaurant() {
           address: formData.address,
           phoneNumber: formData.phoneNumber,
           ownerId: Number(formData.ownerId),
+          settlementId: Number(formData.settlementId),
           supportsDelivery: formData.supportsDelivery,
           supportsPickup: formData.supportsPickup,
         }),
@@ -115,10 +176,42 @@ function CreateRestaurant() {
           onChange={handleChange}
         />
 
+        <select
+          value={selectedMunicipalityId}
+          onChange={(e) => setSelectedMunicipalityId(e.target.value)}
+        >
+          <option value="">Izaberi opštinu</option>
+
+          {municipalities.map((municipality) => (
+            <option key={municipality.id} value={municipality.id}>
+              {municipality.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          name="settlementId"
+          value={formData.settlementId}
+          onChange={handleChange}
+          disabled={!selectedMunicipalityId}
+        >
+          <option value="">
+            {selectedMunicipalityId
+              ? "Izaberi naselje"
+              : "Prvo izaberi opštinu"}
+          </option>
+
+          {settlements.map((settlement) => (
+            <option key={settlement.id} value={settlement.id}>
+              {settlement.name}
+            </option>
+          ))}
+        </select>
+
         <input
           type="text"
           name="address"
-          placeholder="Adresa"
+          placeholder="Adresa, npr. Karađorđeva 10"
           value={formData.address}
           onChange={handleChange}
         />

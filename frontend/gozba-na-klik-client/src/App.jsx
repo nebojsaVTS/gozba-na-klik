@@ -18,6 +18,8 @@ import CartPage from "./components/CartPage";
 import CheckoutPage from "./components/CheckoutPage";
 import CustomerOrders from "./components/CustomerOrders";
 import RoleRoute from "./components/RoleRoute";
+import RestaurantDeliveryZones from "./components/RestaurantDeliveryZones";
+import EditRestaurant from "./components/EditRestaurant";
 
 function App() {
   return (
@@ -135,6 +137,24 @@ function App() {
           element={
             <RoleRoute allowedRoles={["Administrator"]}>
               <CreateRestaurant />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/admin/restaurants/:restaurantId/delivery-zones"
+          element={
+            <RoleRoute allowedRoles={["Administrator"]}>
+              <RestaurantDeliveryZones />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/admin/restaurants/:restaurantId/edit"
+          element={
+            <RoleRoute allowedRoles={["Administrator"]}>
+              <EditRestaurant />
             </RoleRoute>
           }
         />
