@@ -17,5 +17,13 @@
         public int OwnerId { get; set; }
 
         public string OwnerUsername { get; set; } = string.Empty;
+
+        public int? SettlementId { get; set; }
+
+        public string SettlementName { get; set; } = string.Empty;
+
+        public int? MunicipalityId { get; set; }
+
+        public string MunicipalityName { get; set; } = string.Empty;
     }
 }

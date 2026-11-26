@@ -15,5 +15,8 @@
 
         public ICollection<RestaurantDeliveryZone> RestaurantDeliveryZones { get; set; } =
             new List<RestaurantDeliveryZone>();
+
+        public ICollection<Restaurant> Restaurants { get; set; } =
+            new List<Restaurant>();
     }
 }
